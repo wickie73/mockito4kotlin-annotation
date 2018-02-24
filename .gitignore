@@ -9,12 +9,11 @@
 .idea/workspace.xml
 .idea/gradle.xml
 .idea/compiler.xml
+/.idea/dictionaries/*.xml
 build/
 out/
-/.idea/dictionaries/*.xml
 libraries
 modules
 *.name
 *.xml
-gradle
 examples
