@@ -7,7 +7,7 @@
 This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like 
 [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
 
-It works like [MockitoAnnotations.initMocks](https://static.javadoc.io/org.mockito/mockito-core/2.13.0/org/mockito/MockitoAnnotations.html)
+It works like [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.13.0/org/mockito/MockitoAnnotations.html)
 and is full compatible.
 
 The current library can be found in [dist](dist).
