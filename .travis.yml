@@ -12,7 +12,7 @@ install:
 - true
 
 script:
- - chmod +x ./gradlew test jar
+ - ./gradlew test jar
 
 notifications:
   email: false
