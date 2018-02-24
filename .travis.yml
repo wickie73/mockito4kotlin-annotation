@@ -5,11 +5,14 @@ language: kotlin
 jdk:
 - oraclejdk8
 
+before_install:
+ - chmod +x gradlew
+
 install:
 - true
 
 script:
-  - ./gradlew test jar
+ - ./gradlew test jar
 
 notifications:
   email: false
