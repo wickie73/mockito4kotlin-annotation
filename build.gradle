@@ -44,11 +44,11 @@ dokka {
     outputFormat = 'html'
     outputDirectory = 'build/dokka'
 
-//    linkMapping {
-//        dir = "src/main/kotlin"
-//        url = "https://github.com/wikie34/"
-//        suffix = "#L"
-//    }
+    linkMapping {
+        dir = "src/main/kotlin"
+        url = "https://github.com/wickie73/mockito4kotlin.annotation"
+        suffix = "#L"
+    }
 
     jdkVersion = 8
 }
