@@ -2,7 +2,7 @@
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.2%2B-blue.svg)
 ![Mockito](https://img.shields.io/badge/Mockito-2.13%2B-blue.svg)
-[![DUB](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/wickie73/mockito4kotlin/blob/master/LICENSE)
+[![DUB](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSEhttps://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
 This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like 
 [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
