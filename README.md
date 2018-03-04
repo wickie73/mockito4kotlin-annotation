@@ -4,12 +4,18 @@
 ![Mockito](https://img.shields.io/badge/Mockito-2.13%2B-blue.svg)
 [![DUB](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
+![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg)
+
 This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like 
 [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
 
-It works like [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.13.0/org/mockito/MockitoAnnotations.html)
-and is full compatible.
-
+In this library the initialization of fields annotated with Mockito annotations with 
+`MockitoAnnotations.initMocks(testClass)`
+ is replaced by  
+`MockAnnotations.initMocks(testClass)`
+which is written in Kotlin and support most of Kotlin specific features. 
+It is full test-compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.15.0/org/mockito/MockitoAnnotations.html).
+  
 The current library can be found in [dist](dist).
 
 ## Examples
