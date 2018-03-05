@@ -25,38 +25,37 @@
 
 package org.mockito4kotlin.annotation
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.mockito.ArgumentCaptor
+import org.junit.jupiter.api.Test
 
-class ArgumentCaptorTrapWithNestedClassTest {
+class KArgumentCaptorWithInnerClassTest {
 
-    @Captor
-    lateinit var captor: ArgumentCaptor<ClassWithPerson.SubPerson>
+    @KCaptor
+    lateinit var captor: KArgumentCaptor<ClassWithPerson.InnerSubPerson>
     @Mock
     lateinit var personDAO: PersonDAO
-
 
     @BeforeEach
     fun setUp() {
         MockAnnotations.initMocks(this)
     }
 
-    @Disabled("Does not work with Mockito")
-    @DisplayName("should capture the person when class is a nested class of another")
-    fun testTrapWithNestedClass() {
-        val person = createPerson()
-
+    @Test
+    @DisplayName("should capture the person when class is a inner class of another")
+    fun testCaptureWithInnerClass() {
+        val person = createPerson(ClassWithPerson().InnerSubPerson())
         personDAO.save(person)
 
-        verify(personDAO).save(captor.trap())
-        assertEquals(person, captor.value)
+        verify(personDAO).save(captor.capture())
+
+        assertEquals(person, captor.firstValue)
     }
 
-    private fun createPerson(person: Person = ClassWithPerson.SubPerson()) = person.apply {
+    private fun createPerson(person: Person = ClassWithPerson().InnerSubPerson()) = person.apply {
         name = "John"
     }
 }

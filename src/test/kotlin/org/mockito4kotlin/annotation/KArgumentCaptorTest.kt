@@ -25,15 +25,16 @@
 
 package org.mockito4kotlin.annotation
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
 import com.nhaarman.mockito_kotlin.verify
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.mockito.ArgumentCaptor
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
-class ArgumentCaptorTrapTest {
-    @Captor
-    lateinit var captor: ArgumentCaptor<Address>
+class KArgumentCaptorTest {
+    @KCaptor
+    lateinit var captor: KArgumentCaptor<Address>
     @Mock
     lateinit var addressDAO: AddressDAO
 
@@ -43,49 +44,25 @@ class ArgumentCaptorTrapTest {
     }
 
     @Test
-    @Disabled("Does not work with all Tests")
     @DisplayName("should report an error if captor.capture() is called because it is null")
-    fun testMockitoCapture() {
-        addressDAO.save(createAddress())
+    fun testMockitoKCapture() {
+        val address = createAddress()
+        addressDAO.save(address)
 
-        val result = Assertions.assertThrows(IllegalStateException::class.java, {
-            verify(addressDAO).save(captor.capture())
-        })
+        verify(addressDAO).save(captor.capture())
 
-        assertThat(result).hasMessageContaining("captor.capture() must not be null")
+        assertEquals(address, captor.firstValue)
     }
 
     @Test
     @DisplayName("should report an error if captor.capture() is called because it is null")
-    fun testMockitoCaptureWithNullableCaptureClass() {
+    fun testMockitoKCaptureWithNullableCaptureClass() {
         val address: Address? = createAddress()
         addressDAO.register(address)
 
         verify(addressDAO).register(captor.capture())
 
-        assertEquals(address, captor.value)
-    }
-
-    @Test
-    @DisplayName("should capture the address with #trap()")
-    fun testTrap() {
-        val address = createAddress()
-        addressDAO.save(address)
-
-        verify(addressDAO).save(captor.trap())
-
-        assertEquals(address, captor.value)
-    }
-
-    @Test
-    @DisplayName("should capture the address with #trap(Address)")
-    fun testTrapWithInstance() {
-        val address = createAddress()
-        addressDAO.save(address)
-
-        verify(addressDAO).save(captor.trap(address))
-
-        assertEquals(address, captor.value)
+        assertEquals(address, captor.firstValue)
     }
 
     private fun createAddress(address: Address = Address()) = address.apply {

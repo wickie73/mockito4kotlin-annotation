@@ -1,20 +1,20 @@
 # Mockito Annotations for Kotlin
 
-![Kotlin](https://img.shields.io/badge/Kotlin-1.2%2B-blue.svg)
-![Mockito](https://img.shields.io/badge/Mockito-2.13%2B-blue.svg)
-[![DUB](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
+![Kotlin](https://img.shields.io/badge/Kotlin-1.2%2B-blue.svg?longCache=true)
+![Mockito](https://img.shields.io/badge/Mockito-2.13%2B-blue.svg?longCache=true)
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
-![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg)
+![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
 
 This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like 
 [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
 
-In this library the initialization of fields annotated with Mockito annotations with 
+In this library the initialization of fields annotated with Mockito annotations by code  
 `MockitoAnnotations.initMocks(testClass)`
  is replaced by  
 `MockAnnotations.initMocks(testClass)`
-which is written in Kotlin and support most of Kotlin specific features. 
-It is full test-compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.15.0/org/mockito/MockitoAnnotations.html).
+which is written in Kotlin and supports most of Kotlin specific features. 
+It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.15.0/org/mockito/MockitoAnnotations.html).
   
 The current library can be found in [dist](dist).
 
@@ -69,7 +69,7 @@ fun testService() {
 }
 ```
 
-Capture with Annotation:
+ArgumentCaptor with Annotation:
 
 ```kotlin
 @Captor
@@ -98,6 +98,38 @@ fun testService() {
 interface AddressDAO {
     fun getAddressList(): List<Address>
     fun save(address: Address?)  // 'Address?' has to be nullable here
+}
+```
+
+[Mockito-Kotlins](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor with KCapture Annotation:
+
+```kotlin
+@KCaptor
+lateinit var captor: KArgumentCaptor<Address>
+@Mock
+lateinit var addressDAO: AddressDAO
+
+@Before
+fun setUp() {
+    MockAnnotations.initMocks(this)
+}
+
+@Test
+fun testService() {
+    val address: Address().apply {
+        street = "Abbey Road 73"
+        city = "London"
+    }
+
+    addressDAO.save(address)
+
+    verify(addressDAO).save(captor.capture())
+    assertEquals(address, captor.firstValue)
+}
+
+interface AddressDAO {
+    fun getAddressList(): List<Address>
+    fun save(address: Address)  // 'Address' has not to be nullable here
 }
 ```
 
@@ -157,3 +189,4 @@ Instead stubbing works with
 * properties in objects
 * properties in data classes
 * properties of data classes
+

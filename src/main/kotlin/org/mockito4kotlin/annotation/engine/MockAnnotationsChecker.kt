@@ -27,6 +27,7 @@
 
 package org.mockito4kotlin.annotation.engine
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
 import org.mockito.ArgumentCaptor
 import org.mockito.exceptions.base.MockitoException
 import org.mockito4kotlin.annotation.*
@@ -154,6 +155,19 @@ internal object MockAnnotationsChecker {
             |@Captor field must be of the type ${ArgumentCaptor::class.qualifiedName}."
             |Property: '${property.name}' has wrong type.
             |For info how to use @Captor annotations see examples in javadoc for ${Captor::class.simpleName} class.
+            """.trimMargin()
+        }
+    }
+
+
+    internal fun checkIsKArgumentCaptor(property: KProperty<*>) {
+        inCaseOf {
+            KArgumentCaptor::class != property.returnType.classifier
+        } throwMockitoException {
+            """
+            |@KCaptor field must be of the type ${KArgumentCaptor::class.qualifiedName}."
+            |Property: '${property.name}' has wrong type.
+            |For info how to use @Captor annotations see examples in javadoc for ${KCaptor::class.simpleName} class.
             """.trimMargin()
         }
     }

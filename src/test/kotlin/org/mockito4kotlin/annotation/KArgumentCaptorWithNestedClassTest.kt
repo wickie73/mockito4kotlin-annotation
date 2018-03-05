@@ -25,41 +25,38 @@
 
 package org.mockito4kotlin.annotation
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
 import com.nhaarman.mockito_kotlin.verify
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.mockito.ArgumentCaptor
-import org.mockito.exceptions.base.MockitoException
+import org.junit.jupiter.api.Test
 
-class ArgumentCaptorTrapWithInnerClassTest {
+class KArgumentCaptorWithNestedClassTest {
 
-    @Captor
-    lateinit var captor: ArgumentCaptor<ClassWithPerson.InnerSubPerson>
+    @KCaptor
+    lateinit var captor: KArgumentCaptor<ClassWithPerson.SubPerson>
     @Mock
     lateinit var personDAO: PersonDAO
+
 
     @BeforeEach
     fun setUp() {
         MockAnnotations.initMocks(this)
     }
 
-    @Disabled("Does not work with Mockito")
-    @DisplayName("should capture the person when class is a inner class of another")
-    fun testTrapWithInnerClass() {
-        val person = createPerson(ClassWithPerson().InnerSubPerson())
+    @Test
+    @DisplayName("should capture the person when class is a nested class of another")
+    fun testKCaptorWithNestedClass() {
+        val person = createPerson()
+
         personDAO.save(person)
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
-            verify(personDAO).save(captor.trap())
-        })
-
-        assertThat(result).hasMessageContaining("cause it has no empty, accessible constructor to create an instance!")
+        verify(personDAO).save(captor.capture())
+        assertEquals(person, captor.firstValue)
     }
 
-    private fun createPerson(person: Person = ClassWithPerson().InnerSubPerson()) = person.apply {
+    private fun createPerson(person: Person = ClassWithPerson.SubPerson()) = person.apply {
         name = "John"
     }
 }

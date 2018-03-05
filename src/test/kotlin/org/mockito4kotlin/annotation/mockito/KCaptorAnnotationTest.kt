@@ -1,4 +1,5 @@
 /*
+ *
  * The MIT License
  *
  *   Copyright (c) 2017-2018 Wilhelm Schulenburg
@@ -21,10 +22,12 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 package org.mockito4kotlin.annotation.mockito
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -33,7 +36,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.exceptions.base.MockitoException
-import org.mockito4kotlin.annotation.Captor
+import org.mockito4kotlin.annotation.KCaptor
 import org.mockito4kotlin.annotation.Mock
 import org.mockito4kotlin.annotation.MockAnnotations
 import java.util.*
@@ -46,19 +49,19 @@ import java.util.*
  * * @[org.mockito.Captor]
  * * @[org.mockito.InjectMocks]
  */
-class CaptorAnnotationTest {
+class KCaptorAnnotationTest {
 
     @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
     annotation class NotAMock
 
-    @Captor
-    internal var finalCaptor = ArgumentCaptor.forClass(String::class.java)
+    @KCaptor
+    internal var finalCaptor = KArgumentCaptor( ArgumentCaptor.forClass(String::class.java), String::class )
 
-    @Captor
-    internal var genericsCaptor: ArgumentCaptor<List<List<String>>>? = null
+    @KCaptor
+    internal var genericsCaptor: KArgumentCaptor<List<List<String>>>? = null
 
-    @Captor
-    internal var nonGenericCaptorIsAllowed: ArgumentCaptor<*>? = null
+    @KCaptor
+    internal var nonGenericCaptorIsAllowed: KArgumentCaptor<*>? = null
 
     @Mock
     internal var mockInterface: MockInterface? = null
@@ -92,33 +95,33 @@ class CaptorAnnotationTest {
 
         verify(mockInterface)!!.testMe(finalCaptor.capture(), genericsCaptor!!.capture())
 
-        assertEquals(argForFinalCaptor, finalCaptor.value)
-        assertEquals(argForGenericsCaptor, genericsCaptor!!.value)
+        assertEquals(argForFinalCaptor, finalCaptor.firstValue)
+        assertEquals(argForGenericsCaptor, genericsCaptor!!.firstValue)
 
     }
 
     class WrongType {
-        @Captor
+        @KCaptor
         internal var wrongType: List<Map<*, *>>? = null
     }
 
     @Test
-    @DisplayName("Should scream when wrong type for captor")
+    @DisplayName("Should scream when wrong type for kcaptor")
     fun testWithWrongType() {
         val result = assertThrows(MockitoException::class.java, {
             MockAnnotations.initMocks(WrongType())
         })
 
         assertThat(result)
-                .hasMessageContaining("@Captor field must be of the type ${ArgumentCaptor::class.qualifiedName}")
+                .hasMessageContaining("@KCaptor field must be of the type ${KArgumentCaptor::class.qualifiedName}")
                 .hasMessageContaining("Property")
                 .hasMessageContaining("wrong type")
     }
 
     class ToManyAnnotations {
-        @Captor
+        @KCaptor
         @Mock
-        internal var missingGenericsField: ArgumentCaptor<List<*>>? = null
+        internal var missingGenericsField: KArgumentCaptor<List<*>>? = null
     }
 
     @Test
@@ -135,7 +138,7 @@ class CaptorAnnotationTest {
 
     @Test
     @DisplayName("Should look for annotated captors in super classes")
-    fun testWithAnnotatedCaptorsInSuperClasses() {
+    fun testWithAnnotatedKCaptorsInSuperClasses() {
         val sub = Sub()
 
         MockAnnotations.initMocks(sub)
@@ -147,17 +150,17 @@ class CaptorAnnotationTest {
 
 
     internal open inner class SuperBase {
-        @Captor
-        var superBaseCaptor: ArgumentCaptor<Methods4MockTests>? = null
+        @KCaptor
+        var superBaseCaptor: KArgumentCaptor<Methods4MockTests>? = null
     }
 
     internal open inner class Base : SuperBase() {
-        @Captor
-        var baseCaptor: ArgumentCaptor<Methods4MockTests>? = null
+        @KCaptor
+        var baseCaptor: KArgumentCaptor<Methods4MockTests>? = null
     }
 
     internal inner class Sub : Base() {
-        @Captor
-        var captor: ArgumentCaptor<Methods4MockTests>? = null
+        @KCaptor
+        var captor: KArgumentCaptor<Methods4MockTests>? = null
     }
 }

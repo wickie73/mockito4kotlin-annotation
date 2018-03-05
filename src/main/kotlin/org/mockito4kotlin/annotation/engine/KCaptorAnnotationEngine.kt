@@ -25,9 +25,15 @@
 
 package org.mockito4kotlin.annotation.engine
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import org.mockito.ArgumentCaptor
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
+import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkIsKArgumentCaptor
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 import kotlin.reflect.jvm.isAccessible
 
 internal class KCaptorAnnotationEngine : AbstractAnnotationEngine() {
@@ -36,7 +42,18 @@ internal class KCaptorAnnotationEngine : AbstractAnnotationEngine() {
         property.isAccessible = true
         checkImmutableProperties(property)
         checkNumberOfMockAnnotations(property)
+        checkIsKArgumentCaptor(property)
 
-        TODO("to implement")
+        with(property as KMutableProperty<*>) {
+            property.setter.call(anyWithMocks, createArgumentCaptor(property))
+        }
     }
+
+    private fun createArgumentCaptor(property: KProperty<*>): Any {
+        val genericClass = genericClassOf(property.returnType)
+        return KArgumentCaptor(ArgumentCaptor.forClass(genericClass.java), genericClass)
+    }
+
+    private fun genericClassOf(propertyReturnType: KType): KClass<out Any> =
+        propertyReturnType.arguments.firstOrNull()?.type?.classifier as? KClass<out Any> ?: Any::class
 }

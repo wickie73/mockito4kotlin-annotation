@@ -105,6 +105,26 @@ annotation class Spy
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 annotation class Captor
 
+
+/**
+ * Allows shorthand [com.nhaarman.mockito_kotlin.KArgumentCaptor] creation on fields,
+ * properties or property's backing fields.
+ *
+ * * Makes code easier to read.
+ * * Separate initialization of KArgumentCaptor from test code.
+ * * Works like @[org.mockito.Captor] annotation of Mockito.
+ *
+ * See examples in [org.mockito.Captor]
+ *
+ * @see org.mockito.Captor
+ * @see org.mockito.ArgumentCaptor
+ * @see com.nhaarman.mockito_kotlin.KArgumentCaptor
+ * @see org.mockito.Mock
+ * @see org.mockito.Mockito.spy
+ * @see org.mockito.InjectMocks
+ * @see org.mockito.MockitoAnnotations.initMocks
+ *
+ */
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 annotation class KCaptor
 
