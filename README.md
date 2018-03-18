@@ -15,10 +15,22 @@ In this library the initialization of fields annotated with Mockito annotations 
 `MockAnnotations.initMocks(testClass)`
 which is written in Kotlin and supports most of Kotlin specific features. 
 It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.15.0/org/mockito/MockitoAnnotations.html).
+
+&nbsp;&nbsp;&nbsp;[Installing](#installing)
+
+&nbsp;&nbsp;&nbsp;[Examples](#examples)
+
+&nbsp;&nbsp;&nbsp;[Limitations](#limitations)
+
+&nbsp;&nbsp;&nbsp;[@KCapture vs. @Captor Annotation](#kcapture-vs-captor-annotation)
+
+Installing
+----------
   
 The current library can be found in [dist](dist).
 
-## Examples
+Examples
+--------
 
 Mock with Annotation:
 ```kotlin
@@ -169,7 +181,8 @@ class AddressDAOImpl {
 }
 ```
 
-## Limitations
+Limitations
+-----------
 
 Stubbing does not work with
 
@@ -190,3 +203,34 @@ Instead stubbing works with
 * properties in data classes
 * properties of data classes
 
+@KCapture vs. @Captor Annotation
+--------------------------------
+
+Mockitos `ArgumentCaptor#capture()` returns null. So like in this example
+the type of the argument of method `save(address: Address?)` in interface `AddressDAO` has to be `nullable`:
+```kotlin
+@Captor
+lateinit var captor: ArgumentCaptor<Address>
+// ...
+MockAnnotations.initMocks(this)
+// ...
+verify(addressDAO).save(captor.capture())
+// with: 
+interface AddressDAO {
+    fun save(address: Address?)  // 'Address?' has to be nullable here
+}
+```
+With [Mockito-Kotlins](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about 
+`nullable` parameters: 
+```kotlin
+@KCaptor
+lateinit var captor: KArgumentCaptor<Address>
+// ...
+MockAnnotations.initMocks(this)
+// ...
+verify(addressDAO).save(captor.capture())
+// with: 
+interface AddressDAO {
+    fun save(address: Address)  // 'Address' has not to be nullable here
+}
+```
