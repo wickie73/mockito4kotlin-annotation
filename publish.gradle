@@ -1,10 +1,13 @@
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
     groupId = group
     artifactId = 'annotation'
     libVersion = version
-    title = "Mockito Annotations for Kotlin"
+    title = 'Mockito Annotations for Kotlin'
+    description = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
+    licenseURL = 'https://opensource.org/licenses/MIT'
 }
 
 ext.sourceManifest = manifest {
@@ -14,7 +17,7 @@ ext.sourceManifest = manifest {
         "Bundle-Version": version,
         "Bundle-ManifestVersion": "2",
         "Bundle-ActivationPolicy": "lazy",
-        "Bundle-License": "https://opensource.org/licenses/MIT",
+        "Bundle-License": licenseURL,
         "Created-By": "wickie73",
         "Eclipse-SourceBundle": project.name + ";version=" + '"' + version + '"'
     )
@@ -28,7 +31,7 @@ jar.manifest {
         "Bundle-RequiredExecutionEnvironment": "JavaSE-1.8",
         "Bundle-ManifestVersion": "2",
         "Bundle-ActivationPolicy": "lazy",
-        "Bundle-License": "https://opensource.org/licenses/MIT",
+        "Bundle-License": licenseURL,
         "Implementation-Title": title,
         "Implementation-Version": version,
         "Created-By": "wickie73",
@@ -76,6 +79,32 @@ artifacts {
     archives javadocJar
 }
 
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name title
+            packaging 'jar'
+            description description
+            url 'https://github.com/wickie73/mockito4kotlin.annotation'
+
+            licenses {
+                license {
+                    name 'MIT'
+                    url licenseURL
+                }
+            }
+
+            developers {
+                developer {
+                    id 'wickie73'
+                    name 'Wilhelm Schulenburg'
+                }
+            }
+        }
+
+    }
+}
+
 bintray {
     user = hasProperty('user') ? property('user') : null
     key = hasProperty('key') ? property('key') : null
@@ -87,7 +116,7 @@ bintray {
     pkg {
         repo = "wickieMaven"
         name = "mockito4kotlin.annotation"
-        desc = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
+        desc = description
         licenses = ['MIT']
         vcsUrl = 'https://github.com/wickie73/mockito4kotlin.annotation.git'
         version {

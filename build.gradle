@@ -16,6 +16,7 @@ buildscript {
         assertj_version = '3.9.0'
         dokka_version = '0.9.15'
         bintray_version = '1.8.0'
+        android_maven_gradle_version = '2.0'
         encoding = 'UTF-8'
     }
 
@@ -28,6 +29,7 @@ buildscript {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
         classpath "org.junit.platform:junit-platform-gradle-plugin:$junit_plugin_version"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_version"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:$android_maven_gradle_version"
     }
 }
 
