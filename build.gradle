@@ -1,4 +1,4 @@
-group 'org.mockito4kotlin.annotation'
+group 'org.mockito4kotlin'
 version '0.2.1'
 
 apply plugin: 'kotlin'
@@ -6,7 +6,7 @@ apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 buildscript {
-    ext{
+    ext {
         java_version = '1.8'
         kotlin_version = '1.2.30'
         junit5_version = '5.1.0'
@@ -15,6 +15,7 @@ buildscript {
         mockito_kotlin_version = '1.5.0'
         assertj_version = '3.9.0'
         dokka_version = '0.9.15'
+        bintray_version = '1.8.0'
         encoding = 'UTF-8'
     }
 
@@ -26,6 +27,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
         classpath "org.junit.platform:junit-platform-gradle-plugin:$junit_plugin_version"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_version"
     }
 }
 
@@ -47,16 +49,5 @@ junitPlatform {
     details 'summary'
 }
 
-dokka {
-    outputFormat = 'html'
-    outputDirectory = 'build/dokka'
-
-    linkMapping {
-        dir = "src/main/kotlin"
-        url = "https://github.com/wickie73/mockito4kotlin.annotation"
-        suffix = "#L"
-    }
-
-    jdkVersion = 8
-}
+apply from: 'publish.gradle'
 

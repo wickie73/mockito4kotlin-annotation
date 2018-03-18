@@ -1,0 +1,98 @@
+apply plugin: 'com.jfrog.bintray'
+apply from: 'keystore.gradle'
+
+ext {
+    groupId = group
+    artifactId = 'annotation'
+    libVersion = version
+    title = "Mockito Annotations for Kotlin"
+}
+
+ext.sourceManifest = manifest {
+    attributes(
+        "Bundle-Name": title + " Sources",
+        "Bundle-SymbolicName": project.name + ".source",
+        "Bundle-Version": version,
+        "Bundle-ManifestVersion": "2",
+        "Bundle-ActivationPolicy": "lazy",
+        "Bundle-License": "https://opensource.org/licenses/MIT",
+        "Created-By": "wickie73",
+        "Eclipse-SourceBundle": project.name + ";version=" + '"' + version + '"'
+    )
+}
+
+jar.manifest {
+    attributes(
+        "Bundle-Name": title,
+        "Bundle-SymbolicName": project.name,
+        "Bundle-Version": version,
+        "Bundle-RequiredExecutionEnvironment": "JavaSE-1.8",
+        "Bundle-ManifestVersion": "2",
+        "Bundle-ActivationPolicy": "lazy",
+        "Bundle-License": "https://opensource.org/licenses/MIT",
+        "Implementation-Title": title,
+        "Implementation-Version": version,
+        "Created-By": "wickie73",
+        "Specification-Title": title,
+        "Specification-Version": version,
+        "Specification-Vendor": "wickie73",
+        "Export-Package": "org.mockito4kotlin.annotation",
+        "Import-Package": 'com.nhaarman.mockito_kotlin;version="1.5.0"',
+        "Require-Bundle": 'org.mockito;version="[2.13,3)",org.jetbrains.kotlin;version="[1.2.20,1.3)"',
+        "Build-Jdk": java_version
+    )
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = 'build/dokka'
+
+    linkMapping {
+        dir = "src/main/kotlin"
+        url = "https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin"
+        suffix = "#L"
+    }
+
+    jdkVersion = 8
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    manifest = project.manifest {
+        from sourceManifest
+    }
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from dokka.outputDirectory
+}
+
+javadoc.dependsOn dokka
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+bintray {
+    user = hasProperty('user') ? property('user') : bintray_user
+    key = hasProperty('key') ? property('key') : bintray_key
+    configurations = ['archives']
+    publish = true
+    override = false
+    dryRun = false
+
+    pkg {
+        repo = "wickieMaven"
+        name = "mockito4kotlin.annotation"
+        desc = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/wickie73/mockito4kotlin.annotation.git'
+        version {
+            name = libVersion
+        }
+    }
+}
