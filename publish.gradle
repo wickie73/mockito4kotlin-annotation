@@ -1,12 +1,12 @@
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.bintray"
+apply plugin: "com.github.dcendents.android-maven"
 
 ext {
     groupId = group
     artifactId = 'annotation'
     libVersion = version
     title = 'Mockito Annotations for Kotlin'
-    description = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
+    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
     licenseURL = 'https://opensource.org/licenses/MIT'
 }
 
@@ -46,8 +46,8 @@ jar.manifest {
 }
 
 dokka {
-    outputFormat = 'html'
-    outputDirectory = 'build/dokka'
+    outputFormat = "html"
+    outputDirectory = "build/dokka"
 
     linkMapping {
         dir = "src/main/kotlin"
@@ -59,7 +59,7 @@ dokka {
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    classifier = "sources"
     manifest = project.manifest {
         from sourceManifest
     }
@@ -67,7 +67,7 @@ task sourcesJar(type: Jar) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    classifier = "javadoc"
     from dokka.outputDirectory
 }
 
@@ -83,21 +83,25 @@ install {
     repositories.mavenInstaller {
         pom.project {
             name title
-            packaging 'jar'
-            description description
-            url 'https://github.com/wickie73/mockito4kotlin.annotation'
+            packaging "jar"
+            groupId groupId
+            artifactId artifactId
+            version libVersion
+            name "mockito4kotlin.annotation"
+            description descriptionPOM
+            url "https://github.com/wickie73/mockito4kotlin.annotation"
 
             licenses {
                 license {
-                    name 'MIT'
+                    name "MIT"
                     url licenseURL
                 }
             }
 
             developers {
                 developer {
-                    id 'wickie73'
-                    name 'Wilhelm Schulenburg'
+                    id "wickie73"
+                    name "Wilhelm Schulenburg"
                 }
             }
         }
@@ -106,9 +110,9 @@ install {
 }
 
 bintray {
-    user = hasProperty('user') ? property('user') : null
-    key = hasProperty('key') ? property('key') : null
-    configurations = ['archives']
+    user = hasProperty("user") ? property("user") : null
+    key = hasProperty("key") ? property("key") : null
+    configurations = ["archives"]
     publish = true
     override = false
     dryRun = false
@@ -116,9 +120,9 @@ bintray {
     pkg {
         repo = "wickieMaven"
         name = "mockito4kotlin.annotation"
-        desc = description
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/wickie73/mockito4kotlin.annotation.git'
+        desc = descriptionPOM
+        licenses = ["MIT"]
+        vcsUrl = "https://github.com/wickie73/mockito4kotlin.annotation.git"
         version {
             name = libVersion
         }
