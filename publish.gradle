@@ -1,5 +1,4 @@
 apply plugin: 'com.jfrog.bintray'
-apply from: 'keystore.gradle'
 
 ext {
     groupId = group
@@ -78,8 +77,8 @@ artifacts {
 }
 
 bintray {
-    user = hasProperty('user') ? property('user') : bintray_user
-    key = hasProperty('key') ? property('key') : bintray_key
+    user = hasProperty('user') ? property('user') : null
+    key = hasProperty('key') ? property('key') : null
     configurations = ['archives']
     publish = true
     override = false
