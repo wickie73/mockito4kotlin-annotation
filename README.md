@@ -16,19 +16,38 @@ In this library the initialization of fields annotated with Mockito annotations 
 which is written in Kotlin and supports most of Kotlin specific features. 
 It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.15.0/org/mockito/MockitoAnnotations.html).
 
-&nbsp;&nbsp;&nbsp;[Installing](#installing)
-
-&nbsp;&nbsp;&nbsp;[Examples](#examples)
-
-&nbsp;&nbsp;&nbsp;[Limitations](#limitations)
-
-&nbsp;&nbsp;&nbsp;[@KCapture vs. @Captor Annotation](#kcapture-vs-captor-annotation)
+## Content
+* [Installing](#installing)
+* [Examples](#examples)
+* [Limitations](#limitations)
+* [@KCapture vs. @Captor Annotation](#kcapture-vs-captor-annotation)
 
 Installing
 ----------
-  
-The current library can be found in [dist](dist).
 
+Mockito Annotations for Kotlin is available on jcenter.   
+### gradle
+```gradle
+testcompile 'org.mockito4kotlin:annotation:0.2.2'
+```
+### maven
+```xml
+<dependency>
+    <groupId>org.mockito4kotlin</groupId>
+    <artifactId>annotation</artifactId>
+    <version>0.2.2</version>
+    <scope>test</scope>
+</dependency>
+
+<repository>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+    <id>bintray-wickie73-maven</id>
+    <name>bintray</name>
+    <url>https://bintray.com/wickie73/wickieMaven</url>
+</repository>
+```
 Examples
 --------
 

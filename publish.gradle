@@ -110,8 +110,8 @@ install {
 }
 
 bintray {
-    user = hasProperty("user") ? property("user") : null
-    key = hasProperty("key") ? property("key") : null
+    user = project.hasProperty("user") ? project.property("user") : ''
+    key = project.hasProperty("key") ? project.property("key") : ''
     configurations = ["archives"]
     publish = true
     override = false
@@ -128,3 +128,4 @@ bintray {
         }
     }
 }
+
