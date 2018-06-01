@@ -44,13 +44,6 @@ dependencies {
 
 test {
     useJUnitPlatform ()
-    testLogging {
-        events "failed"
-        exceptionFormat "short"
-        debug.events = ["started", "skipped", "failed", "passed"]
-        debug.exceptionFormat "full"
-        info.events = ["failed", "skipped"]
-    }
 }
 
 apply from: 'publish.gradle'
