@@ -7,8 +7,11 @@ sudo: false
 
 language: kotlin
 
-jdk:
-- oraclejdk8
+matrix:
+  include:
+  - jdk: oraclejdk8
+  - jdk: oraclejdk9
+  - jdk: oraclejdk10
 
 before_install:
  - chmod +x gradlew

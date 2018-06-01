@@ -1,1 +1,3 @@
 rootProject.name = 'org.mockito4kotlin.annotation'
+group 'org.mockito4kotlin'
+version '0.2.6'
