@@ -35,7 +35,7 @@ testcompile 'org.mockito4kotlin:annotation:0.2.7'
 <dependency>
     <groupId>org.mockito4kotlin</groupId>
     <artifactId>annotation</artifactId>
-    <version>0.2.2</version>
+    <version>0.2.7</version>
     <scope>test</scope>
 </dependency>
 
