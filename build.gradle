@@ -7,7 +7,7 @@ buildscript {
         kotlin_version = '1.2.41'
         junit5_version = '5.2.0'
         mockito_version = '2.18.3'
-        mockito_kotlin_version = '1.5.0'
+        mockito_kotlin_version = '2.0.0-alpha04'
         assertj_version = '3.10.0'
         dokka_version = '0.9.17'
         bintray_version = '1.8.0'
@@ -36,7 +36,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "org.mockito:mockito-core:$mockito_version"
-    compile "com.nhaarman:mockito-kotlin-kt1.1:$mockito_kotlin_version"
+    compile "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
     testCompile "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     testCompile "org.assertj:assertj-core:$assertj_version"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit5_version"

@@ -27,7 +27,7 @@
 
 package org.mockito4kotlin.annotation.engine
 
-import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import com.nhaarman.mockitokotlin2.KArgumentCaptor
 import org.mockito.ArgumentCaptor
 import org.mockito.exceptions.base.MockitoException
 import org.mockito4kotlin.annotation.*

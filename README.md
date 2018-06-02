@@ -7,7 +7,7 @@
 ![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
 
 This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like 
-[Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
+[Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
 
 In this library the initialization of fields annotated with Mockito annotations by code  
 `MockitoAnnotations.initMocks(testClass)`
@@ -28,14 +28,14 @@ Installing
 Mockito Annotations for Kotlin is available on jcenter.   
 ### gradle
 ```gradle
-testcompile 'org.mockito4kotlin:annotation:0.2.7'
+testcompile 'org.mockito4kotlin:annotation:0.3.x'
 ```
 ### maven
 ```xml
 <dependency>
     <groupId>org.mockito4kotlin</groupId>
     <artifactId>annotation</artifactId>
-    <version>0.2.2</version>
+    <version>0.3.x</version>
     <scope>test</scope>
 </dependency>
 
@@ -132,7 +132,7 @@ interface AddressDAO {
 }
 ```
 
-[Mockito-Kotlins](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor with KCapture Annotation:
+[Mockito-Kotlins](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) KArgumentCaptor with KCapture Annotation:
 
 ```kotlin
 @KCaptor
@@ -239,7 +239,7 @@ interface AddressDAO {
     fun save(address: Address?)  // 'Address?' has to be nullable here
 }
 ```
-With [Mockito-Kotlins](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about 
+With [Mockito-Kotlin2s](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about 
 `nullable` parameters: 
 ```kotlin
 @KCaptor
