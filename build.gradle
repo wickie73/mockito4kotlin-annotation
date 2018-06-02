@@ -9,7 +9,7 @@ buildscript {
         mockito_version = '2.18.3'
         mockito_kotlin_version = '1.5.0'
         assertj_version = '3.10.0'
-        dokka_version = '0.9.15'
+        dokka_version = '0.9.17'
         bintray_version = '1.8.0'
         android_maven_gradle_version = '2.1'
         gradle_version = '4.7'
