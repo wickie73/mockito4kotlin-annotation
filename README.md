@@ -5,6 +5,7 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
 ![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
+[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockito4kotlin.annotation/images/download.svg?version=0.3.0) ](https://bintray.com/wickie73/wickieMaven/org.mockito4kotlin.annotation/0.3.0/link)
 
 This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like 
 [Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
@@ -253,3 +254,4 @@ interface AddressDAO {
     fun save(address: Address)  // 'Address' has not to be nullable here
 }
 ```
+
