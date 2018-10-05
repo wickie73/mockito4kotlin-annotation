@@ -29,14 +29,14 @@ Installing
 Mockito Annotations for Kotlin is available on jcenter.   
 ### gradle
 ```gradle
-testCompile 'org.mockito4kotlin:annotation:0.3.x'
+testCompile 'org.mockito4kotlin:annotation:0.3.0'
 ```
 ### maven
 ```xml
 <dependency>
     <groupId>org.mockito4kotlin</groupId>
     <artifactId>annotation</artifactId>
-    <version>0.3.x</version>
+    <version>0.3.0</version>
     <scope>test</scope>
 </dependency>
 
