@@ -31,15 +31,15 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.Mock
+import org.mockito.Spy
 import org.mockito.exceptions.base.MockitoException
-import org.mockito4kotlin.annotation.Mock
-import org.mockito4kotlin.annotation.MockAnnotations
-import org.mockito4kotlin.annotation.Spy
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 import java.util.*
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.SpyAnnotationTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -61,7 +61,7 @@ class SpyAnnotationTest {
 
     @BeforeEach
     fun setUp() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Test
@@ -94,7 +94,7 @@ class SpyAnnotationTest {
 
         val withSpy = WithSpy()
 
-        MockAnnotations.initMocks(withSpy)
+        KMockitoAnnotations.initMocks(withSpy)
 
         whenever(withSpy.list!!.size).thenReturn(3)
         assertEquals(3, withSpy.list!!.size)
@@ -111,7 +111,7 @@ class SpyAnnotationTest {
         val withSpy = WithSpy()
 
         //when
-        MockAnnotations.initMocks(withSpy)
+        KMockitoAnnotations.initMocks(withSpy)
 
         //then
         verify(withSpy.list, never()).isEmpty()
@@ -126,12 +126,12 @@ class SpyAnnotationTest {
         }
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(FailingSpy())
+            KMockitoAnnotations.initMocks(FailingSpy())
         })
 
         assertThat(result.message)
-                .contains("Unable to create mock instance")
-                .contains(NoValidConstructor::class.java.simpleName)
+            .contains("Unable to create mock instance")
+            .contains(NoValidConstructor::class.java.simpleName)
     }
 
     @Test
@@ -143,7 +143,7 @@ class SpyAnnotationTest {
         }
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(FailingSpy())
+            KMockitoAnnotations.initMocks(FailingSpy())
         })
 
         assertThat(result.message).contains("Unable to create mock instance")
@@ -165,7 +165,7 @@ class SpyAnnotationTest {
 
         val withSpy = SpyAbstractClass()
 
-        MockAnnotations.initMocks(withSpy)
+        KMockitoAnnotations.initMocks(withSpy)
 
         assertEquals(listOf("a"), withSpy.asSingletonList("a"))
     }
@@ -199,7 +199,7 @@ class SpyAnnotationTest {
         }
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(WithMockAndSpy())
+            KMockitoAnnotations.initMocks(WithMockAndSpy())
         })
 
         assertThat(result.message).contains("Unable to create mock instance of type 'InnerStrength'")
@@ -226,7 +226,7 @@ class SpyAnnotationTest {
         }
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(WithSpy())
+            KMockitoAnnotations.initMocks(WithSpy())
         })
 
         assertThat(result).hasMessageContaining("Unable to create mock instance of type")
@@ -238,13 +238,13 @@ class SpyAnnotationTest {
         val spyWithInnerPrivate = WithInnerPrivate()
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(spyWithInnerPrivate)
+            KMockitoAnnotations.initMocks(spyWithInnerPrivate)
         })
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize private/internal inner classes.")
-                .hasMessageContaining(WithInnerPrivate::class.simpleName)
-                .hasMessageContaining("InnerPrivate")
-                .hasMessageContaining("You should augment the visibility of this inner class.")
+            .hasMessageContaining(WithInnerPrivate::class.simpleName)
+            .hasMessageContaining("InnerPrivate")
+            .hasMessageContaining("You should augment the visibility of this inner class.")
     }
 
     @Test
@@ -253,13 +253,13 @@ class SpyAnnotationTest {
         val spyWithInnerInternal = WithInnerInternal()
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(spyWithInnerInternal)
+            KMockitoAnnotations.initMocks(spyWithInnerInternal)
         })
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize private/internal inner classes.")
-                .hasMessageContaining(WithInnerInternal::class.simpleName)
-                .hasMessageContaining("InnerInternal")
-                .hasMessageContaining("You should augment the visibility of this inner class.")
+            .hasMessageContaining(WithInnerInternal::class.simpleName)
+            .hasMessageContaining("InnerInternal")
+            .hasMessageContaining("You should augment the visibility of this inner class.")
     }
 
     @Test
@@ -268,13 +268,13 @@ class SpyAnnotationTest {
         val spyWithInnerPrivateAbstract = WithInnerPrivateAbstract()
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(spyWithInnerPrivateAbstract)
+            KMockitoAnnotations.initMocks(spyWithInnerPrivateAbstract)
         })
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize private/internal inner classes.")
-                .hasMessageContaining(WithInnerPrivateAbstract::class.simpleName)
-                .hasMessageContaining("InnerPrivateAbstract")
-                .hasMessageContaining("You should augment the visibility of this inner class.")
+            .hasMessageContaining(WithInnerPrivateAbstract::class.simpleName)
+            .hasMessageContaining("InnerPrivateAbstract")
+            .hasMessageContaining("You should augment the visibility of this inner class.")
     }
 
     @Test
@@ -283,13 +283,13 @@ class SpyAnnotationTest {
         val spyWithInnerPrivateStaticAbstract = WithInnerPrivateStaticAbstract()
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(spyWithInnerPrivateStaticAbstract)
+            KMockitoAnnotations.initMocks(spyWithInnerPrivateStaticAbstract)
         })
 
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize companion objects.")
-                .hasMessageContaining("${WithInnerPrivateStaticAbstract::class.qualifiedName}.InnerPrivateStaticAbstract.Test")
-                .hasMessageContaining("You should avoid to mock/spy companion objects.")
+            .hasMessageContaining("${WithInnerPrivateStaticAbstract::class.qualifiedName}.InnerPrivateStaticAbstract.Test")
+            .hasMessageContaining("You should avoid to mock/spy companion objects.")
     }
 
     @Test

@@ -28,9 +28,10 @@
 
 package org.mockito4kotlin.annotation.engine
 
+import org.mockito.Mock
 import org.mockito.MockSettings
 import org.mockito.Mockito
-import org.mockito4kotlin.annotation.Mock
+import org.mockito4kotlin.annotation.allAnnotations
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.javaField
@@ -41,7 +42,7 @@ internal object MockAnnotationProcessor {
 
     private fun retrieveMockSettings(property: KProperty<*>): MockSettings {
         val mockSettings = Mockito.withSettings()
-        with(property.annotations.find { it is Mock } as Mock) {
+        with(property.allAnnotations().find { it is Mock } as Mock) {
             when {
                 extraInterfaces.isNotEmpty() -> mockSettings.extraInterfaces(*extraInterfaces.map { it.java }.toTypedArray())
             }

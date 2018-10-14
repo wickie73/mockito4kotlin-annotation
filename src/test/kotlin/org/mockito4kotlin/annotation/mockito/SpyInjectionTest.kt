@@ -30,15 +30,15 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.InjectMocks
+import org.mockito.Spy
 import org.mockito.internal.util.MockUtil.isSpy
-import org.mockito4kotlin.annotation.InjectMocks
-import org.mockito4kotlin.annotation.MockAnnotations
-import org.mockito4kotlin.annotation.Spy
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 import kotlin.reflect.full.createInstance
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.SpyInjectionTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -67,7 +67,7 @@ class SpyInjectionTest {
         } catch (e: IllegalArgumentException) {
             hasSpy = HasSpy()
         }
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Test

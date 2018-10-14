@@ -27,7 +27,9 @@
 package org.mockito4kotlin.annotation
 
 import org.mockito.ArgumentCaptor
-import kotlin.properties.Delegates
+import org.mockito.Captor
+import org.mockito.Mock
+import org.mockito.Spy
 
 class ClassWithMutableProperties {
 
@@ -197,13 +199,5 @@ data class DataClassWithMockPropertyInConstructor(@Mock var propertyToMock: Char
 
 data class DataClassWithSpyPropertyInConstructor(@Spy var propertyToSpy: CharSequence?)
 
-class ClassWithByObservableProperty {
 
-    lateinit var result: MutableList<String>
-
-    @Mock
-    var list: List<String> by Delegates.observable(mutableListOf()) { _, _, new ->
-        result.addAll(new)
-    }
-}
 

@@ -26,7 +26,7 @@
 package org.mockito4kotlin.annotation.engine
 
 import org.mockito.Mockito
-import org.mockito4kotlin.annotation.Spy
+import org.mockito.Spy
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalCompanionObjects

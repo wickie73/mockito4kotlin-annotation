@@ -28,6 +28,7 @@
 package org.mockito4kotlin.annotation.mockito
 
 import com.nhaarman.mockitokotlin2.KArgumentCaptor
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -35,15 +36,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.Mock
 import org.mockito.exceptions.base.MockitoException
 import org.mockito4kotlin.annotation.KCaptor
-import org.mockito4kotlin.annotation.Mock
-import org.mockito4kotlin.annotation.MockAnnotations
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 import java.util.*
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.CaptorAnnotationTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -55,7 +56,10 @@ class KCaptorAnnotationTest {
     annotation class NotAMock
 
     @KCaptor
-    internal var finalCaptor = KArgumentCaptor( ArgumentCaptor.forClass(String::class.java), String::class )
+    internal var finalCaptor = KArgumentCaptor(ArgumentCaptor.forClass(String::class.java), String::class)
+
+    @KCaptor
+    internal var finalKcaptor = argumentCaptor<String>()
 
     @KCaptor
     internal var genericsCaptor: KArgumentCaptor<List<List<String>>>? = null
@@ -75,7 +79,7 @@ class KCaptorAnnotationTest {
 
     @BeforeEach
     fun setUp() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Test
@@ -97,7 +101,27 @@ class KCaptorAnnotationTest {
 
         assertEquals(argForFinalCaptor, finalCaptor.firstValue)
         assertEquals(argForGenericsCaptor, genericsCaptor!!.firstValue)
+    }
 
+    @Test
+    @DisplayName("test normal usages")
+    fun testNormalUsageWithArgumentCaptorMethod() {
+        // check if assigned correctly
+        assertNotNull(finalKcaptor)
+        assertNotNull(genericsCaptor)
+        assertNotNull(nonGenericCaptorIsAllowed)
+        assertNull(notAMock)
+
+        // use captors in the field to be sure they are cool
+        val argForFinalCaptor = "Hello"
+        val argForGenericsCaptor = ArrayList<List<String>>()
+
+        mockInterface!!.testMe(argForFinalCaptor, argForGenericsCaptor)
+
+        verify(mockInterface)!!.testMe(finalKcaptor.capture(), genericsCaptor!!.capture())
+
+        assertEquals(argForFinalCaptor, finalKcaptor.firstValue)
+        assertEquals(argForGenericsCaptor, genericsCaptor!!.firstValue)
     }
 
     class WrongType {
@@ -109,13 +133,13 @@ class KCaptorAnnotationTest {
     @DisplayName("Should scream when wrong type for kcaptor")
     fun testWithWrongType() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(WrongType())
+            KMockitoAnnotations.initMocks(WrongType())
         })
 
         assertThat(result)
-                .hasMessageContaining("@KCaptor field must be of the type ${KArgumentCaptor::class.qualifiedName}")
-                .hasMessageContaining("Property")
-                .hasMessageContaining("wrong type")
+            .hasMessageContaining("@KCaptor field must be of the type ${KArgumentCaptor::class.qualifiedName}")
+            .hasMessageContaining("Property")
+            .hasMessageContaining("wrong type")
     }
 
     class ToManyAnnotations {
@@ -128,12 +152,12 @@ class KCaptorAnnotationTest {
     @DisplayName("Should scream when more than one mockito annotation")
     fun testWhenMoreThanOneMockitoAnnotation() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(ToManyAnnotations())
+            KMockitoAnnotations.initMocks(ToManyAnnotations())
         })
 
         assertThat(result)
-                .hasMessageContaining("missingGenericsField")
-                .hasMessageContaining("multiple Mockito4Kotlin annotations")
+            .hasMessageContaining("missingGenericsField")
+            .hasMessageContaining("multiple Mockito4Kotlin annotations")
     }
 
     @Test
@@ -141,7 +165,7 @@ class KCaptorAnnotationTest {
     fun testWithAnnotatedKCaptorsInSuperClasses() {
         val sub = Sub()
 
-        MockAnnotations.initMocks(sub)
+        KMockitoAnnotations.initMocks(sub)
 
         assertNotNull(sub.captor)
         assertNotNull(sub.baseCaptor)

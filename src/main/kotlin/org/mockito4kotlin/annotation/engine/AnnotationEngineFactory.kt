@@ -25,7 +25,11 @@
 
 package org.mockito4kotlin.annotation.engine
 
-import org.mockito4kotlin.annotation.*
+import org.mockito.Captor
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Spy
+import org.mockito4kotlin.annotation.KCaptor
 
 internal object AnnotationEngineFactory {
 

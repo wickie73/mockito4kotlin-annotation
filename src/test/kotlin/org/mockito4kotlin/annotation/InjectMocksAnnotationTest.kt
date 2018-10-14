@@ -30,8 +30,11 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Mockito
+import org.mockito.*
+import org.mockito.Captor
+import org.mockito.Mock
+import org.mockito.Spy
+import org.mockito.InjectMocks
 import org.mockito.exceptions.base.MockitoException
 
 class InjectMocksAnnotationTest {
@@ -50,7 +53,7 @@ class InjectMocksAnnotationTest {
     @Test
     @DisplayName("should mock all properties of class 'ClassUnderTest' with @InjectMocks")
     fun testMockOfInjectMocks() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
 
         assertNotNull(classUnderTest.numbers)
         assertTrue(Mockito.mockingDetails(classUnderTest.numbers).isMock)
@@ -62,7 +65,7 @@ class InjectMocksAnnotationTest {
     @Test
     @DisplayName("should spy all properties of class 'ClassUnderTest' with @InjectMocks")
     fun testSpyOfInjectMocks() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
 
         assertNotNull(classUnderTest.keyStringMap2)
         assertTrue(Mockito.mockingDetails(classUnderTest.keyStringMap2).isMock)
@@ -74,7 +77,7 @@ class InjectMocksAnnotationTest {
     @Test
     @DisplayName("should throw an exception if properties which does not match the given mocks are not initialized")
     fun testNotMatchedMocksOfInjectMocks() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
 
         assertThatCode({ classUnderTest.keyStringMap1 })
             .isInstanceOf(UninitializedPropertyAccessException::class.java)
@@ -94,7 +97,7 @@ class InjectMocksAnnotationTest {
     @DisplayName("should report that mock of properties of inner class 'ClassUnderTestWithInnerClass' with @InjectMocks is not supported")
     fun testMockOfInjectMocksOfInnerClass() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(MockAnnotations.initMocks(object : Any() {
+            KMockitoAnnotations.initMocks(KMockitoAnnotations.initMocks(object : Any() {
                 @InjectMocks
                 private val classUnderTestWithInnerClass = ClassUnderTestWithInnerClass().InnerClass()
             }))
@@ -106,7 +109,7 @@ class InjectMocksAnnotationTest {
     @Test
     @DisplayName("should mock all properties of nested class 'ClassUnderTestWithNestedClass' with @InjectMocks")
     fun testMockOfInjectMocksOfNestedClass() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
 
         assertNotNull(classUnderTestWithNestedClass.numbers)
         assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.numbers).isMock)
@@ -118,7 +121,7 @@ class InjectMocksAnnotationTest {
     @Test
     @DisplayName("should spy all properties of class 'ClassUnderTestWithNestedClass' with @InjectMocks")
     fun testSpyOfInjectMocksOfNestedClass() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
 
         assertNotNull(classUnderTestWithNestedClass.keyStringMap)
         assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.keyStringMap).isMock)

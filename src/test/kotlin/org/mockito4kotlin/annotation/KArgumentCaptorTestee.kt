@@ -42,7 +42,7 @@ class Address {
 }
 
 open class Person {
-    var name=""
+    var name = ""
 }
 
 class ClassWithPerson {

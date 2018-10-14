@@ -30,17 +30,17 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Spy
 import org.mockito.exceptions.base.MockitoException
-import org.mockito4kotlin.annotation.InjectMocks
-import org.mockito4kotlin.annotation.Mock
-import org.mockito4kotlin.annotation.MockAnnotations
-import org.mockito4kotlin.annotation.Spy
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 import java.util.*
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.MockInjectionUsingSetterOrPropertyTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -90,7 +90,7 @@ class MockInjectionUsingSetterOrPropertyTest {
 
     @BeforeEach
     fun setUp() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Test
@@ -124,21 +124,21 @@ class MockInjectionUsingSetterOrPropertyTest {
     @Test
     @DisplayName("should inject mocks if annotated")
     fun testInjectMocksWithAnnotation() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
         assertSame(list, superUnderTest.aList)
     }
 
     @Test
     @DisplayName("should not inject if not annotated")
     fun testInjectMocksWithoutAnnotation() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
         assertNull(superUnderTestWithoutInjection.aList)
     }
 
     @Test
     @DisplayName("should inject mocks for class hierarchy if annotated")
     fun testInjectMocksWithinClassHierarchy() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
         assertSame(list, baseUnderTest.aList)
         assertSame(map, baseUnderTest.aMap)
     }
@@ -146,7 +146,7 @@ class MockInjectionUsingSetterOrPropertyTest {
     @Test
     @DisplayName("should inject mocks by name")
     fun testInjectMocksByName() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
         assertSame(histogram1, subUnderTest.histogram1)
         assertSame(histogram2, subUnderTest.histogram2)
     }
@@ -154,14 +154,14 @@ class MockInjectionUsingSetterOrPropertyTest {
     @Test
     @DisplayName("should inject spies")
     fun testInjectMocksWithSpy() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
         assertSame(searchTree, otherBaseUnderTest.searchTree)
     }
 
     @Test
     @DisplayName("should insert into field with matching name when multiple fields of same type exists in injectee")
     fun testInjectMocksWithFieldsOfSameType() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
         assertNull(hasTwoFieldsWithSameType.candidate1, "not injected, no mock named 'candidate1'")
         assertNotNull(hasTwoFieldsWithSameType.candidate2, "injected, there's a mock named 'candidate2'")
     }
@@ -181,7 +181,7 @@ class MockInjectionUsingSetterOrPropertyTest {
         }
 
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(failing)
+            KMockitoAnnotations.initMocks(failing)
         })
 
         assertThat(result.message).contains("failingConstructor").contains("constructor").contains("threw an exception")

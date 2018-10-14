@@ -32,15 +32,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mock
 import org.mockito.exceptions.base.MockitoException
-import org.mockito4kotlin.annotation.Captor
-import org.mockito4kotlin.annotation.Mock
-import org.mockito4kotlin.annotation.MockAnnotations
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 import java.util.*
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.CaptorAnnotationTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -72,7 +72,7 @@ class CaptorAnnotationTest {
 
     @BeforeEach
     fun setUp() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Test
@@ -106,13 +106,13 @@ class CaptorAnnotationTest {
     @DisplayName("Should scream when wrong type for captor")
     fun testWithWrongType() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(WrongType())
+            KMockitoAnnotations.initMocks(WrongType())
         })
 
         assertThat(result)
-                .hasMessageContaining("@Captor field must be of the type ${ArgumentCaptor::class.qualifiedName}")
-                .hasMessageContaining("Property")
-                .hasMessageContaining("wrong type")
+            .hasMessageContaining("@Captor field must be of the type ${ArgumentCaptor::class.qualifiedName}")
+            .hasMessageContaining("Property")
+            .hasMessageContaining("wrong type")
     }
 
     class ToManyAnnotations {
@@ -125,12 +125,12 @@ class CaptorAnnotationTest {
     @DisplayName("Should scream when more than one mockito annotation")
     fun testWhenMoreThanOneMockitoAnnotation() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(ToManyAnnotations())
+            KMockitoAnnotations.initMocks(ToManyAnnotations())
         })
 
         assertThat(result)
-                .hasMessageContaining("missingGenericsField")
-                .hasMessageContaining("multiple Mockito4Kotlin annotations")
+            .hasMessageContaining("missingGenericsField")
+            .hasMessageContaining("multiple Mockito4Kotlin annotations")
     }
 
     @Test
@@ -138,7 +138,7 @@ class CaptorAnnotationTest {
     fun testWithAnnotatedCaptorsInSuperClasses() {
         val sub = Sub()
 
-        MockAnnotations.initMocks(sub)
+        KMockitoAnnotations.initMocks(sub)
 
         assertNotNull(sub.captor)
         assertNotNull(sub.baseCaptor)

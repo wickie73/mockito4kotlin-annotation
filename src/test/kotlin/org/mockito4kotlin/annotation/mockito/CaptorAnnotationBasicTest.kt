@@ -33,13 +33,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
-import org.mockito4kotlin.annotation.Captor
-import org.mockito4kotlin.annotation.Mock
-import org.mockito4kotlin.annotation.MockAnnotations
+import org.mockito.Captor
+import org.mockito.Mock
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.CaptorAnnotationBasicTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -62,7 +62,7 @@ class CaptorAnnotationBasicTest {
 
     @BeforeEach
     fun setUp() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Test
@@ -101,8 +101,8 @@ class CaptorAnnotationBasicTest {
     @DisplayName("Should use genericless annotated captor")
     fun testGenericlessAnnotatedCaptor() {
         //when
-        val name="Wes"
-        val surname="Williams"
+        val name = "Wes"
+        val surname = "Williams"
         createPerson(name, surname)
 
         //then

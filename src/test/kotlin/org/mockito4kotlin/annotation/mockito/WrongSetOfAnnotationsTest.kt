@@ -29,13 +29,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
+import org.mockito.*
 import org.mockito.exceptions.base.MockitoException
-import org.mockito4kotlin.annotation.*
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.WrongSetOfAnnotationsTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -46,18 +46,18 @@ class WrongSetOfAnnotationsTest {
     @Test
     @DisplayName("should not allow Mock and Spy")
     fun testWithMockAndSpyAnnotation() {
-        val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(object : Any() {
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.initMocks(object : Any() {
                 @Mock
                 @Spy
                 internal var mock: List<*>? = null
             })
-        })
+        }
 
         assertThat(result)
-                .hasMessageContaining("multiple Mockito4Kotlin annotations")
-                .hasMessageContaining("Mock")
-                .hasMessageContaining("Spy")
+            .hasMessageContaining("multiple Mockito4Kotlin annotations")
+            .hasMessageContaining("Mock")
+            .hasMessageContaining("Spy")
     }
 
 
@@ -65,21 +65,21 @@ class WrongSetOfAnnotationsTest {
     @DisplayName("should not allow Spy and InjectMocks on interfaces")
     fun testWithSpyAndInjectMocksAnnotationOnInterfaces() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(object : Any() {
+            KMockitoAnnotations.initMocks(object : Any() {
                 @InjectMocks
                 @Spy
                 internal var mock: List<*>? = null
             })
         })
         assertThat(result)
-                .hasMessageContaining("Cannot instantiate @InjectMocks field named")
-                .hasMessageContaining("'List' is an interface")
+            .hasMessageContaining("Cannot instantiate @InjectMocks field named")
+            .hasMessageContaining("'List' is an interface")
     }
 
     @Test
     @DisplayName("should allow Spy and InjectMocks")
     fun testWithSpyAndInjectMocksAnnotation() {
-        MockAnnotations.initMocks(object : Any() {
+        KMockitoAnnotations.initMocks(object : Any() {
             @InjectMocks
             @Spy
             internal var mock: WithDependency? = null
@@ -94,64 +94,64 @@ class WrongSetOfAnnotationsTest {
     @DisplayName("should not allow Mock and InjectMocks")
     fun testWithMockAndInjectMocksAnnotation() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(object : Any() {
+            KMockitoAnnotations.initMocks(object : Any() {
                 @InjectMocks
                 @Mock
                 internal var mock: List<*>? = null
             })
         })
         assertThat(result)
-                .hasMessageContaining("multiple Mockito4Kotlin annotations")
-                .hasMessageContaining("InjectMocks")
-                .hasMessageContaining("Mock")
+            .hasMessageContaining("multiple Mockito4Kotlin annotations")
+            .hasMessageContaining("InjectMocks")
+            .hasMessageContaining("Mock")
     }
 
     @Test
     @DisplayName("should not allow Captor and Mock")
     fun testWithMockAndCaptorAnnotation() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(object : Any() {
+            KMockitoAnnotations.initMocks(object : Any() {
                 @Mock
                 @Captor
                 internal var captor: ArgumentCaptor<*>? = null
             })
         })
         assertThat(result)
-                .hasMessageContaining("multiple Mockito4Kotlin annotations")
-                .hasMessageContaining("Captor")
-                .hasMessageContaining("Mock")
+            .hasMessageContaining("multiple Mockito4Kotlin annotations")
+            .hasMessageContaining("Captor")
+            .hasMessageContaining("Mock")
     }
 
     @Test
     @DisplayName("should not allow Captor and Spy")
     fun testWithSpyAndCaptorAnnotation() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(object : Any() {
+            KMockitoAnnotations.initMocks(object : Any() {
                 @Spy
                 @Captor
                 internal var captor: ArgumentCaptor<*>? = null
             })
         })
         assertThat(result)
-                .hasMessageContaining("multiple Mockito4Kotlin annotations")
-                .hasMessageContaining("Captor")
-                .hasMessageContaining("Spy")
+            .hasMessageContaining("multiple Mockito4Kotlin annotations")
+            .hasMessageContaining("Captor")
+            .hasMessageContaining("Spy")
     }
 
     @Test
     @DisplayName("should not allow Captor and InjectMocks")
     fun testWithCaptorAndInjectsMocksAnnotation() {
         val result = assertThrows(MockitoException::class.java, {
-            MockAnnotations.initMocks(object : Any() {
+            KMockitoAnnotations.initMocks(object : Any() {
                 @InjectMocks
                 @Captor
                 internal var captor: ArgumentCaptor<*>? = null
             })
         })
         assertThat(result)
-                .hasMessageContaining("multiple Mockito4Kotlin annotations")
-                .hasMessageContaining("Captor")
-                .hasMessageContaining("InjectMocks")
+            .hasMessageContaining("multiple Mockito4Kotlin annotations")
+            .hasMessageContaining("Captor")
+            .hasMessageContaining("InjectMocks")
     }
 
 }

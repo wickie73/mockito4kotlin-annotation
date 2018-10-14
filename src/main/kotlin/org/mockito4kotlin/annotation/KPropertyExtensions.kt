@@ -28,6 +28,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.withNullability
+import kotlin.reflect.jvm.javaField
 
 /**
  * Returns [KType] of this property with nullability.
@@ -48,5 +49,12 @@ val <T> KProperty<T>.kClass: KClass<*>?
  * , where [String] the type argument of class [List].
  */
 fun <T> KProperty<T>.hasTypeArguments(): Boolean = this.type.arguments.isNotEmpty()
+
+/**
+ * Returns all annotations including java-based annotations.
+ */
+fun <T> KProperty<T>.allAnnotations(): List<Annotation> = this.javaField?.annotations?.let { this.annotations + it }
+    ?: this.annotations
+
 
 

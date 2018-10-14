@@ -29,6 +29,9 @@ package org.mockito4kotlin.annotation.engine
 
 import com.nhaarman.mockitokotlin2.KArgumentCaptor
 import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.InjectMocks
+import org.mockito.Spy
 import org.mockito.exceptions.base.MockitoException
 import org.mockito4kotlin.annotation.*
 import java.lang.reflect.InvocationTargetException
@@ -77,7 +80,7 @@ internal object MockAnnotationsChecker {
         fun isSpyWithInjectMocksAnnotation(annotations: List<Annotation>) =
             annotations.count { it is Spy || it is InjectMocks } == 2
 
-        val annotations = property.annotations.filter(isMockito4KotlinAnnotationOr { it is InjectMocks })
+        val annotations = property.allAnnotations().filter(isMockito4KotlinAnnotationOr { it is InjectMocks })
         val annotationClassNames = annotations.map { it.annotationClass.simpleName }
 
         inCaseOf {

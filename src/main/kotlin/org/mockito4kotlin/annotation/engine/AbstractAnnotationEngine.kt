@@ -28,9 +28,6 @@ package org.mockito4kotlin.annotation.engine
 import org.mockito4kotlin.annotation.MockPropertyCollector
 import kotlin.reflect.KMutableProperty
 
-/**
- * @author Wilhelm Schulenburg
- */
 internal abstract class AbstractAnnotationEngine : AnnotationEngine {
 
     protected lateinit var mockedPropertiesAssigned: MockPropertyCollector

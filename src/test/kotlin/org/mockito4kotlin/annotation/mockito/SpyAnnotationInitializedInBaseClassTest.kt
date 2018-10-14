@@ -29,13 +29,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.Spy
 import org.mockito.internal.util.MockUtil.isSpy
-import org.mockito4kotlin.annotation.MockAnnotations
-import org.mockito4kotlin.annotation.Spy
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.SpyAnnotationInitializedInBaseClassTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -58,7 +58,7 @@ open class SpyAnnotationInitializedInBaseClassTest {
         //given
         val subClass = SubClass()
         //when
-        MockAnnotations.initMocks(subClass)
+        KMockitoAnnotations.initMocks(subClass)
         //then
         assertTrue(isSpy(subClass.list))
     }
@@ -68,14 +68,14 @@ open class SpyAnnotationInitializedInBaseClassTest {
     fun shouldInitSpiesInHierarchyInNestedClass() {
         val subTest = SubTest()
 
-        MockAnnotations.initMocks(subTest)
+        KMockitoAnnotations.initMocks(subTest)
 
         subTest.shouldInitSpiesInHierarchy()
     }
 
     @BeforeEach
     internal fun setUp() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Spy

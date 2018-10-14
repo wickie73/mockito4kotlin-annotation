@@ -31,13 +31,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Answers
+import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito4kotlin.annotation.Mock
-import org.mockito4kotlin.annotation.MockAnnotations
+import org.mockito4kotlin.annotation.KMockitoAnnotations
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.AnnotationsTest] and
- * ensures that [MockAnnotations] is compatible with Mockito Annotations like
+ * ensures that [KMockitoAnnotations] is compatible with Mockito Annotations like
  * * @[org.mockito.Mock]
  * * @[org.mockito.Spy]
  * * @[org.mockito.Captor]
@@ -62,7 +62,7 @@ class AnnotationsTest {
 
     @BeforeEach
     fun setUp() {
-        MockAnnotations.initMocks(this)
+        KMockitoAnnotations.initMocks(this)
     }
 
     @Test
@@ -88,7 +88,7 @@ class AnnotationsTest {
     fun shouldLookForAnnotatedMocksInSuperClasses() {
         val sub = Sub()
 
-        MockAnnotations.initMocks(sub)
+        KMockitoAnnotations.initMocks(sub)
 
         assertNotNull(sub.mock)
         assertNotNull(sub.baseMock)

@@ -25,7 +25,7 @@
 
 package org.mockito4kotlin.annotation.engine
 
-import org.mockito4kotlin.annotation.Mock
+import org.mockito.Mock
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkDelegateProperty
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
