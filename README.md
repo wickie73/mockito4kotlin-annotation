@@ -13,7 +13,7 @@ This is a small Kotlin library which supports Annotations for Mockito or Kotlin 
 In this library the initialization of fields annotated with Mockito annotations by code  
 `MockitoAnnotations.initMocks(testClass)`
  is replaced by  
-`MockAnnotations.initMocks(testClass)`
+`KMockitoAnnotations.initMocks(testClass)`
 which is written in Kotlin and supports most of Kotlin specific features. 
 It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.15.0/org/mockito/MockitoAnnotations.html).
 
@@ -61,7 +61,7 @@ lateinit var address: Address
 
 @Before
 fun setUp() {
-    MockAnnotations.initMocks(this)
+    KMockitoAnnotations.initMocks(this)
 }
 
 @Test
@@ -86,7 +86,7 @@ lateinit var address: Address
 
 @Before
 fun setUp() {
-    MockAnnotations.initMocks(this)
+    KMockitoAnnotations.initMocks(this)
 }
 
 @Test
@@ -111,7 +111,7 @@ lateinit var addressDAO: AddressDAO
 
 @Before
 fun setUp() {
-    MockAnnotations.initMocks(this)
+    KMockitoAnnotations.initMocks(this)
 }
 
 @Test
@@ -143,7 +143,7 @@ lateinit var addressDAO: AddressDAO
 
 @Before
 fun setUp() {
-    MockAnnotations.initMocks(this)
+    KMockitoAnnotations.initMocks(this)
 }
 
 @Test
@@ -177,7 +177,7 @@ val addressDAO: AddressDAOImpl()
 
 @Before
 fun setUp() {
-    MockAnnotations.initMocks(this)
+    KMockitoAnnotations.initMocks(this)
 }
 
 @Test
@@ -232,7 +232,7 @@ the type of the argument of method `save(address: Address?)` in interface `Addre
 @Captor
 lateinit var captor: ArgumentCaptor<Address>
 // ...
-MockAnnotations.initMocks(this)
+KMockitoAnnotations.initMocks(this)
 // ...
 verify(addressDAO).save(captor.capture())
 // with: 
@@ -246,7 +246,7 @@ With [Mockito-Kotlin2s](https://github.com/nhaarman/mockito-kotlin) KArgumentCap
 @KCaptor
 lateinit var captor: KArgumentCaptor<Address>
 // ...
-MockAnnotations.initMocks(this)
+KMockitoAnnotations.initMocks(this)
 // ...
 verify(addressDAO).save(captor.capture())
 // with: 
