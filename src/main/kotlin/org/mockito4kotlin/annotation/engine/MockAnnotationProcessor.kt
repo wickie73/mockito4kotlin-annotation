@@ -31,6 +31,7 @@ package org.mockito4kotlin.annotation.engine
 import org.mockito.Mock
 import org.mockito.MockSettings
 import org.mockito.Mockito
+import org.mockito4kotlin.annotation.KMock
 import org.mockito4kotlin.annotation.allAnnotations
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -42,7 +43,17 @@ internal object MockAnnotationProcessor {
 
     private fun retrieveMockSettings(property: KProperty<*>): MockSettings {
         val mockSettings = Mockito.withSettings()
-        with(property.allAnnotations().find { it is Mock } as Mock) {
+        val mockAnnotation = property.allAnnotations().find { it is Mock || it is KMock }
+
+        when (mockAnnotation) {
+            is Mock -> mockSettings(mockAnnotation, mockSettings, property)
+            is KMock -> kmockSettings(mockAnnotation, mockSettings, property)
+        }
+        return mockSettings
+    }
+
+    private fun mockSettings(mockAnnotation: Mock, mockSettings: MockSettings, property: KProperty<*>) {
+        with(mockAnnotation) {
             when {
                 extraInterfaces.isNotEmpty() -> mockSettings.extraInterfaces(*extraInterfaces.map { it.java }.toTypedArray())
             }
@@ -51,6 +62,18 @@ internal object MockAnnotationProcessor {
             if (serializable) mockSettings.serializable()
             mockSettings.defaultAnswer(answer)
         }
-        return mockSettings
     }
+
+    private fun kmockSettings(mockAnnotation: KMock, mockSettings: MockSettings, property: KProperty<*>) {
+        with(mockAnnotation) {
+            when {
+                extraInterfaces.isNotEmpty() -> mockSettings.extraInterfaces(*extraInterfaces.map { it.java }.toTypedArray())
+            }
+            if (stubOnly) mockSettings.stubOnly()
+            if (name.isNotEmpty()) mockSettings.name(name) else mockSettings.name(property.name)
+            if (serializable) mockSettings.serializable()
+            mockSettings.defaultAnswer(answer)
+        }
+    }
+
 }

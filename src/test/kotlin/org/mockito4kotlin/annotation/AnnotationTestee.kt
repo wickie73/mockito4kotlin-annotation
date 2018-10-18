@@ -36,6 +36,10 @@ class ClassWithMutableProperties {
     @Mock
     lateinit var lateinitList: List<String>
 
+
+    @KMock
+    lateinit var lateinitListK: List<String>
+
     @Spy
     lateinit var lateinitSet: Set<String>
 
@@ -51,11 +55,19 @@ class ClassWithImmutableMockProperty {
     @Mock
     val immutableList = listOf<String>()
 
+
+}
+
+class ClassWithImmutableKMockProperty {
+
+    @KMock
+    val immutableListK = listOf<String>()
+
 }
 
 class ClassWithImmutableSpyProperty {
 
-    @Mock
+    @Spy
     val immutableMap = mapOf<String, String>()
 
 }
@@ -74,6 +86,13 @@ class ClassWithMockPropertyOfFinalClass {
 
 }
 
+class ClassWithKMockPropertyOfFinalClass {
+
+    @KMock
+    lateinit var nameK: String
+
+}
+
 class ClassWithSpyPropertyOfFinalClass {
 
     @Spy
@@ -85,6 +104,10 @@ sealed class SealedClass {
 
     @Mock
     lateinit var lateinitList: List<String>
+
+    @KMock
+    lateinit var lateinitListK: List<String>
+
     @Spy
     lateinit var lateinitSet: Set<String>
 
@@ -93,12 +116,26 @@ sealed class SealedClass {
 data class DataSubClassOfSealedClass(val value: Int) : SealedClass() {
     @Mock
     lateinit var lateinitMap: Map<String, String>
+
+}
+
+data class DataSubClassOfSealedClassWithKMock(val value: Int) : SealedClass() {
+
+    @KMock
+    lateinit var lateinitMapK: Map<String, String>
 }
 
 class ClassWithMockOfSealedClasses {
 
     @Mock
     lateinit var sealedPropertyToMock: SealedClass
+
+}
+
+class ClassWithKMockOfSealedClasses {
+
+    @KMock
+    lateinit var sealedPropertyToKMock: SealedClass
 
 }
 
@@ -116,6 +153,13 @@ class ClassWithSpyOfInitializedSealedClasses {
 
 }
 
+class ClassWithSpyOfInitializedSealedClassesWithKMock {
+
+    @Spy
+    var sealedPropertyToSpy: SealedClass = DataSubClassOfSealedClassWithKMock(34)
+
+}
+
 
 open class ClassWithExtensionProperty
 
@@ -128,6 +172,9 @@ class ClassWithMockExtensionProperty {
     @Mock
     lateinit var propertyToMock: ClassWithExtensionProperty
 
+    @KMock
+    lateinit var propertyToKMock: ClassWithExtensionProperty
+
 }
 
 open class ClassWithCompanionObjectAndMockProperty {
@@ -136,6 +183,9 @@ open class ClassWithCompanionObjectAndMockProperty {
         @Mock
         lateinit var propertyToMock: CharSequence
 
+        @KMock
+        lateinit var propertyToKMock: CharSequence
+
     }
 }
 
@@ -143,6 +193,9 @@ class ClassWithCompanionObjectMockProperty {
 
     @Mock
     lateinit var propertyToMock: ClassWithCompanionObjectAndMockProperty
+
+    @KMock
+    lateinit var propertyToKMock: ClassWithCompanionObjectAndMockProperty
 
 }
 
@@ -168,6 +221,9 @@ object ObjectWithMockProperty {
     @Mock
     lateinit var propertyToMock: CharSequence
 
+    @KMock
+    lateinit var propertyToKMock: CharSequence
+
 }
 
 
@@ -188,6 +244,13 @@ class ClassWithMockObjectProperties {
 
 }
 
+class ClassWithKMockObjectProperties {
+
+    @KMock
+    lateinit var lateinitObjK: ObjectForTests
+
+}
+
 class ClassWithSpyObjectProperties {
 
     @Spy
@@ -196,6 +259,8 @@ class ClassWithSpyObjectProperties {
 }
 
 data class DataClassWithMockPropertyInConstructor(@Mock var propertyToMock: CharSequence)
+
+data class DataClassWithKMockPropertyInConstructor(@KMock var propertyToKMock: CharSequence)
 
 data class DataClassWithSpyPropertyInConstructor(@Spy var propertyToSpy: CharSequence?)
 

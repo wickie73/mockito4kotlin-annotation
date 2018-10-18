@@ -180,9 +180,9 @@ class MockInjectionUsingSetterOrPropertyTest {
             internal var failingConstructor: ThrowingConstructor? = null
         }
 
-        val result = assertThrows(MockitoException::class.java, {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(failing)
-        })
+        }
 
         assertThat(result.message).contains("failingConstructor").contains("constructor").contains("threw an exception")
     }

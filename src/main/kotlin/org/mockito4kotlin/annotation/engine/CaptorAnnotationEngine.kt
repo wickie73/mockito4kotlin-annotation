@@ -43,9 +43,7 @@ internal class CaptorAnnotationEngine : AbstractAnnotationEngine() {
         checkNumberOfMockAnnotations(property)
         checkIsArgumentCaptor(property)
 
-        with(property as KMutableProperty<*>) {
-            property.setter.call(anyWithMocks, createArgumentCaptor(property))
-        }
+        (property as KMutableProperty<*>).setter.call(anyWithMocks, createArgumentCaptor(property))
     }
 
     private fun createArgumentCaptor(property: KProperty<*>): Any =

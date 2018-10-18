@@ -28,14 +28,17 @@ package org.mockito4kotlin.annotation
 
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.RepeatedTest
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.base.MockitoException
 import java.security.SecureRandom
 import kotlin.reflect.KFunction0
 
-class Mockito4KotlinAnnotationTest {
+class MockAnnotationTest {
 
     @Test
     @DisplayName("should mock mutable property")
@@ -48,6 +51,19 @@ class Mockito4KotlinAnnotationTest {
         assertNotNull(testee.lateinitList)
         assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
         assertEquals("test", testee.lateinitList[0])
+    }
+
+    @Test
+    @DisplayName("should kmock mutable property")
+    fun testMutableKMock() {
+        val testee = ClassWithMutableProperties()
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.lateinitListK[0]).thenReturn("test")
+
+        assertNotNull(testee.lateinitListK)
+        assertTrue(Mockito.mockingDetails(testee.lateinitListK).isMock)
+        assertEquals("test", testee.lateinitListK[0])
     }
 
     @Test
@@ -155,11 +171,24 @@ class Mockito4KotlinAnnotationTest {
     fun testImmutableMock() {
         val testee = ClassWithImmutableMockProperty()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
 
         assertThat(result).hasMessageContaining("Cannot mock field named 'immutableList', cause it is immutable!")
+        assertThat(result).hasMessageContaining("@Mock")
+    }
+
+    @Test
+    @DisplayName("should report kmock immutable property is not supported")
+    fun testImmutableKMock() {
+        val testee = ClassWithImmutableKMockProperty()
+
+        val result = Assertions.assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.initMocks(testee)
+        }
+
+        assertThat(result).hasMessageContaining("Cannot mock field named 'immutableListK', cause it is immutable!")
         assertThat(result).hasMessageContaining("@Mock")
     }
 
@@ -168,9 +197,9 @@ class Mockito4KotlinAnnotationTest {
     fun testImmutableSpy() {
         val testee = ClassWithImmutableSpyProperty()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
 
         assertThat(result).hasMessageContaining("Cannot mock field named 'immutableMap', cause it is immutable!")
         assertThat(result).hasMessageContaining("@Mock")
@@ -181,9 +210,9 @@ class Mockito4KotlinAnnotationTest {
     fun testImmutableCaptor() {
         val testee = ClassWithImmutableCaptorProperty()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
 
         assertThat(result).hasMessageContaining("Cannot mock field named 'captor', cause it is immutable!")
         assertThat(result).hasMessageContaining("@Mock")
@@ -194,9 +223,22 @@ class Mockito4KotlinAnnotationTest {
     fun testMockOfFinalClass() {
         val testee = ClassWithMockPropertyOfFinalClass()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
+
+        assertThat(result).hasMessageContaining("Cannot mock/spy class java.lang.String")
+        assertThat(result).hasMessageContaining("final class")
+    }
+
+    @Test
+    @DisplayName("should report kmock property of final class like String is not supported")
+    fun testKMockOfFinalClass() {
+        val testee = ClassWithKMockPropertyOfFinalClass()
+
+        val result = Assertions.assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.initMocks(testee)
+        }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class java.lang.String")
         assertThat(result).hasMessageContaining("final class")
@@ -207,9 +249,9 @@ class Mockito4KotlinAnnotationTest {
     fun testSpyOfFinalClass() {
         val testee = ClassWithSpyPropertyOfFinalClass()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class java.lang.String")
         assertThat(result).hasMessageContaining("final class")
@@ -229,6 +271,19 @@ class Mockito4KotlinAnnotationTest {
     }
 
     @Test
+    @DisplayName("should kmock mutable property (List) in a data class with sealed supertype class")
+    fun testMockOfDataClassWithListWithKMock() {
+        val testee = DataSubClassOfSealedClassWithKMock(34)
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.lateinitListK[0]).thenReturn("test")
+
+        assertNotNull(testee.lateinitListK)
+        assertTrue(Mockito.mockingDetails(testee.lateinitListK).isMock)
+        assertEquals("test", testee.lateinitListK[0])
+    }
+
+    @Test
     @DisplayName("should mock mutable property (Map) in a data class with sealed supertype class")
     fun testMockOfDataClassWithMap() {
         val testee = DataSubClassOfSealedClass(34)
@@ -239,6 +294,19 @@ class Mockito4KotlinAnnotationTest {
         assertNotNull(testee.lateinitMap)
         assertTrue(Mockito.mockingDetails(testee.lateinitMap).isMock)
         assertEquals("test", testee.lateinitMap["key"])
+    }
+
+    @Test
+    @DisplayName("should kmock mutable property (Map) in a data class with sealed supertype class")
+    fun testMockOfDataClassWithMapWithKMock() {
+        val testee = DataSubClassOfSealedClassWithKMock(34)
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.lateinitMapK["key"]).thenReturn("test")
+
+        assertNotNull(testee.lateinitMapK)
+        assertTrue(Mockito.mockingDetails(testee.lateinitMapK).isMock)
+        assertEquals("test", testee.lateinitMapK["key"])
     }
 
     @Test
@@ -269,13 +337,26 @@ class Mockito4KotlinAnnotationTest {
     }
 
     @Test
+    @DisplayName("should kmock mutable property of a sealed class")
+    fun testKMockOfSealedClass() {
+        val testee = ClassWithKMockOfSealedClasses()
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.sealedPropertyToKMock.toString()).thenReturn("test")
+
+        assertNotNull(testee.sealedPropertyToKMock)
+        assertTrue(Mockito.mockingDetails(testee.sealedPropertyToKMock).isMock)
+        assertEquals("test", testee.sealedPropertyToKMock.toString())
+    }
+
+    @Test
     @DisplayName("should report spy of mutable property of a sealed class is not supported")
     fun testSpyOfSealedClass() {
         val testee = ClassWithSpyOfSealedClasses()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
 
         assertThat(result).hasMessageContaining("Unable to initialize @Spy annotated field named 'sealedPropertyToSpy' of type 'org.mockito4kotlin.annotation.SealedClass'.")
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize sealed classes.")
@@ -286,9 +367,22 @@ class Mockito4KotlinAnnotationTest {
     fun testMockOfInitializedSealedClass() {
         val testee = ClassWithSpyOfInitializedSealedClasses()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
+
+        assertThat(result).hasMessageContaining("Unable to initialize @Spy annotated field named 'sealedPropertyToSpy' of type 'org.mockito4kotlin.annotation.SealedClass'.")
+        assertThat(result).hasMessageContaining("@Spy annotation can't initialize sealed classes.")
+    }
+
+    @Test
+    @DisplayName("should report spy of mutable initialized property of sealed class is not supported")
+    fun testMockOfInitializedSealedClassWithKMock() {
+        val testee = ClassWithSpyOfInitializedSealedClassesWithKMock()
+
+        val result = Assertions.assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.initMocks(testee)
+        }
 
         assertThat(result).hasMessageContaining("Unable to initialize @Spy annotated field named 'sealedPropertyToSpy' of type 'org.mockito4kotlin.annotation.SealedClass'.")
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize sealed classes.")
@@ -309,6 +403,20 @@ class Mockito4KotlinAnnotationTest {
     }
 
     @Test
+    @DisplayName("should mock mutable property of a class with extension property")
+    fun testKMockOfClassWithExtensionProperty() {
+        val testee = ClassWithMockExtensionProperty()
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.propertyToKMock.toString()).thenReturn("test")
+
+        assertNotNull(testee.propertyToKMock)
+        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertNotNull(testee.propertyToKMock.value)
+        assertEquals("test", testee.propertyToKMock.toString())
+    }
+
+    @Test
     @DisplayName("should mock mutable property in a companion object")
     fun testMockOfPropertyOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectAndMockProperty.Companion
@@ -322,6 +430,19 @@ class Mockito4KotlinAnnotationTest {
     }
 
     @Test
+    @DisplayName("should kmock mutable property in a companion object")
+    fun testKMockOfPropertyOfClassCompanionObject() {
+        val testee = ClassWithCompanionObjectAndMockProperty.Companion
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.propertyToKMock[0]).thenReturn('k')
+
+        assertNotNull(testee.propertyToKMock)
+        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertEquals('k', testee.propertyToKMock[0])
+    }
+
+    @Test
     @DisplayName("should mock mutable property in a companion object")
     fun testMockOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectMockProperty()
@@ -332,6 +453,19 @@ class Mockito4KotlinAnnotationTest {
         assertNotNull(testee.propertyToMock)
         assertTrue(Mockito.mockingDetails(testee.propertyToMock).isMock)
         assertEquals("test", testee.propertyToMock.toString())
+    }
+
+    @Test
+    @DisplayName("should kmock mutable property in a companion object")
+    fun testKMockOfClassCompanionObject() {
+        val testee = ClassWithCompanionObjectMockProperty()
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.propertyToKMock.toString()).thenReturn("test")
+
+        assertNotNull(testee.propertyToKMock)
+        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertEquals("test", testee.propertyToKMock.toString())
     }
 
     @Test
@@ -376,6 +510,19 @@ class Mockito4KotlinAnnotationTest {
     }
 
     @Test
+    @DisplayName("should kmock mutable property in a object (singleton)")
+    fun testKMockOfObject() {
+        val testee = ObjectWithMockProperty
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.propertyToKMock[0]).thenReturn('k')
+
+        assertNotNull(testee.propertyToKMock)
+        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertEquals('k', testee.propertyToKMock[0])
+    }
+
+    @Test
     @DisplayName("should spy mutable property in a object (singleton)")
     fun testSpyOfObject() {
         val testee = ObjectWithSpyProperty
@@ -394,9 +541,22 @@ class Mockito4KotlinAnnotationTest {
     fun testMockObjectProperty() {
         val testee = ClassWithMockObjectProperties()
 
-        val result = Assertions.assertThrows(MockitoException::class.java, {
+        val result = Assertions.assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
-        })
+        }
+
+        assertThat(result).hasMessageContaining("Cannot mock/spy class org.mockito4kotlin.annotation.ObjectForTests")
+        assertThat(result).hasMessageContaining("final class")
+    }
+
+    @Test
+    @DisplayName("should report mock mutable property of a object (singleton, final) is not supported")
+    fun testKMockObjectProperty() {
+        val testee = ClassWithKMockObjectProperties()
+
+        val result = Assertions.assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.initMocks(testee)
+        }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class org.mockito4kotlin.annotation.ObjectForTests")
         assertThat(result).hasMessageContaining("final class")
@@ -416,8 +576,7 @@ class Mockito4KotlinAnnotationTest {
     }
 
     @Test
-    @Disabled
-    @DisplayName("should mock mutable property in data class")
+    @DisplayName("should not mock mutable property in data class")
     fun testMockOfDataClassProperty() {
         val testee = DataClassWithMockPropertyInConstructor("mockito for kotlin")
 
@@ -425,8 +584,21 @@ class Mockito4KotlinAnnotationTest {
         whenever(testee.propertyToMock[0]).thenReturn('k')
 
         assertNotNull(testee.propertyToMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToMock).isMock)
-        assertEquals('k', testee.propertyToMock[0])
+        assertFalse(Mockito.mockingDetails(testee.propertyToMock).isMock)
+        assertNotEquals('k', testee.propertyToMock[0])
+    }
+
+    @Test
+    @DisplayName("should kmock mutable property in data class")
+    fun testKMockOfDataClassProperty() {
+        val testee = DataClassWithKMockPropertyInConstructor("mockito for kotlin")
+
+        KMockitoAnnotations.initMocks(testee)
+        whenever(testee.propertyToKMock[0]).thenReturn('k')
+
+        assertNotNull(testee.propertyToKMock)
+        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertEquals('k', testee.propertyToKMock[0])
     }
 
     @Test

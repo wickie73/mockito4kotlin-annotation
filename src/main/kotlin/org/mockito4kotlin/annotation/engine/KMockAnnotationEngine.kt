@@ -1,4 +1,5 @@
 /*
+ *
  * The MIT License
  *
  *   Copyright (c) 2017-2018 Wilhelm Schulenburg
@@ -21,29 +22,31 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 package org.mockito4kotlin.annotation.engine
 
-import org.mockito.Captor
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Spy
-import org.mockito4kotlin.annotation.KCaptor
 import org.mockito4kotlin.annotation.KMock
+import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkDelegateProperty
+import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
+import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
+import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalCompanionObjects
+import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalInnerClass
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.isAccessible
 
-internal object AnnotationEngineFactory {
+internal class KMockAnnotationEngine : AbstractAnnotationEngine() {
 
-    internal fun create(annotation: Annotation?): AnnotationEngine {
-        return when (annotation) {
-            is Mock -> MockAnnotationEngine()
-            is KMock -> KMockAnnotationEngine()
-            is Spy -> SpyAnnotationEngine()
-            is Captor -> CaptorAnnotationEngine()
-            is KCaptor -> KCaptorAnnotationEngine()
-            is InjectMocks -> InjectMocksAnnotationEngine()
-            else -> throw IllegalArgumentException("Unknown annotation $annotation")
-        }
+    override fun process(anyWithMocks: Any, property: KProperty<*>) {
+        property.isAccessible = true
+        checkImmutableProperties(property)
+        checkNumberOfMockAnnotations(property)
+        checkPrivateOrInternalInnerClass(KMock::class, property, anyWithMocks)
+        checkPrivateOrInternalCompanionObjects(KMock::class, property)
+        checkDelegateProperty(KMock::class, property )
+
+        assignObjectToProperty(property as KMutableProperty<*>, anyWithMocks, MockAnnotationProcessor.createMock(property))
     }
-
 }

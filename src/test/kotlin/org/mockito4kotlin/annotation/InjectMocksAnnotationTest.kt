@@ -31,16 +31,14 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.*
-import org.mockito.Captor
-import org.mockito.Mock
-import org.mockito.Spy
-import org.mockito.InjectMocks
 import org.mockito.exceptions.base.MockitoException
 
 class InjectMocksAnnotationTest {
 
     @Mock
     private lateinit var numbers: List<Number>
+    @KMock
+    private lateinit var knumbers: List<Number>
     @Spy
     private lateinit var keyStringMap: Map<Number, CharSequence>
     @Captor
@@ -56,10 +54,15 @@ class InjectMocksAnnotationTest {
         KMockitoAnnotations.initMocks(this)
 
         assertNotNull(classUnderTest.numbers)
+        assertNotNull(classUnderTest.knumbers)
         assertTrue(Mockito.mockingDetails(classUnderTest.numbers).isMock)
+        assertTrue(Mockito.mockingDetails(classUnderTest.knumbers).isMock)
         assertFalse(Mockito.mockingDetails(classUnderTest.numbers).isSpy)
+        assertFalse(Mockito.mockingDetails(classUnderTest.knumbers).isSpy)
         assertThat(classUnderTest.numbers).hasSize(0)
+        assertThat(classUnderTest.knumbers).hasSize(0)
         assertEquals(classUnderTest.numbers, numbers)
+        assertEquals(classUnderTest.knumbers, knumbers)
     }
 
     @Test
@@ -79,15 +82,15 @@ class InjectMocksAnnotationTest {
     fun testNotMatchedMocksOfInjectMocks() {
         KMockitoAnnotations.initMocks(this)
 
-        assertThatCode({ classUnderTest.keyStringMap1 })
+        assertThatCode { classUnderTest.keyStringMap1 }
             .isInstanceOf(UninitializedPropertyAccessException::class.java)
             .hasMessageContaining("lateinit property")
             .hasMessageContaining("has not been initialized")
-        assertThatCode({ classUnderTest.doubleNumbers })
+        assertThatCode { classUnderTest.doubleNumbers }
             .isInstanceOf(UninitializedPropertyAccessException::class.java)
             .hasMessageContaining("lateinit property")
             .hasMessageContaining("has not been initialized")
-        assertThatCode({ classUnderTest.captor })
+        assertThatCode { classUnderTest.captor }
             .isInstanceOf(UninitializedPropertyAccessException::class.java)
             .hasMessageContaining("lateinit property")
             .hasMessageContaining("has not been initialized")
@@ -96,12 +99,12 @@ class InjectMocksAnnotationTest {
     @Test
     @DisplayName("should report that mock of properties of inner class 'ClassUnderTestWithInnerClass' with @InjectMocks is not supported")
     fun testMockOfInjectMocksOfInnerClass() {
-        val result = assertThrows(MockitoException::class.java, {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(KMockitoAnnotations.initMocks(object : Any() {
                 @InjectMocks
                 private val classUnderTestWithInnerClass = ClassUnderTestWithInnerClass().InnerClass()
             }))
-        })
+        }
 
         assertThat(result).hasMessageContaining("is an inner class and has internally no empty constructor")
     }
@@ -112,10 +115,15 @@ class InjectMocksAnnotationTest {
         KMockitoAnnotations.initMocks(this)
 
         assertNotNull(classUnderTestWithNestedClass.numbers)
+        assertNotNull(classUnderTestWithNestedClass.knumbers)
         assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.numbers).isMock)
+        assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.knumbers).isMock)
         assertFalse(Mockito.mockingDetails(classUnderTestWithNestedClass.numbers).isSpy)
+        assertFalse(Mockito.mockingDetails(classUnderTestWithNestedClass.knumbers).isSpy)
         assertThat(classUnderTestWithNestedClass.numbers).hasSize(0)
+        assertThat(classUnderTestWithNestedClass.knumbers).hasSize(0)
         assertEquals(classUnderTestWithNestedClass.numbers, numbers)
+        assertEquals(classUnderTestWithNestedClass.knumbers, knumbers)
     }
 
     @Test
@@ -132,6 +140,7 @@ class InjectMocksAnnotationTest {
 
     class ClassunderTest {
         internal lateinit var numbers: List<Number>
+        internal lateinit var knumbers: List<Number>
         internal lateinit var keyStringMap1: Map<Double, String>
         internal lateinit var keyStringMap2: Map<Number, String>
         internal lateinit var doubleNumbers: List<Double>
@@ -141,6 +150,7 @@ class InjectMocksAnnotationTest {
     class ClassUnderTestWithInnerClass {
         inner class InnerClass {
             internal lateinit var numbers: List<Number>
+            internal lateinit var knumbers: List<Number>
             internal lateinit var keyStringMap: Map<Number, String>
         }
     }
@@ -148,6 +158,7 @@ class InjectMocksAnnotationTest {
     class ClassUnderTestWithNestedClass {
         class NestedClass {
             internal lateinit var numbers: List<Number>
+            internal lateinit var knumbers: List<Number>
             internal lateinit var keyStringMap: Map<Number, String>
         }
     }
