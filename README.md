@@ -1,7 +1,7 @@
 # Mockito Annotations for Kotlin
 
-![Kotlin](https://img.shields.io/badge/Kotlin-1.2%2B-blue.svg?longCache=true)
-![Mockito](https://img.shields.io/badge/Mockito-2.13%2B-blue.svg?longCache=true)
+![Kotlin](https://img.shields.io/badge/Kotlin-1.3%2B-blue.svg?longCache=true)
+![Mockito](https://img.shields.io/badge/Mockito-2.23%2B-blue.svg?longCache=true)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
 ![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
