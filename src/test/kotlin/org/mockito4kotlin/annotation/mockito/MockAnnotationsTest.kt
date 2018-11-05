@@ -43,7 +43,7 @@ import org.mockito4kotlin.annotation.KMockitoAnnotations
  * * @[org.mockito.Captor]
  * * @[org.mockito.InjectMocks]
  */
-class AnnotationsTest {
+class MockAnnotationsTest {
 
     @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
     annotation class NotAMock
