@@ -27,8 +27,11 @@
 package org.mockito4kotlin.annotation
 
 import com.nhaarman.mockitokotlin2.whenever
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.RepeatedTest
@@ -147,6 +150,32 @@ class MockAnnotationTest {
         list.parallelStream().forEach(KFunction0<Unit>::invoke)
     }
 
+    @RepeatedTest(value = 5, name = "{displayName} {currentRepetition}/{totalRepetitions}")
+    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee)' is called many times in many coroutines")
+    fun testInitMocksManyTimesWithCoroutines() = runBlocking {
+
+        fun runMockAnnotationsInitMocks() {
+            val sleepTime = SecureRandom().nextInt(10).toLong()
+            Thread.sleep(sleepTime)
+            val testee = ClassWithMutableProperties()
+
+            KMockitoAnnotations.initMocks(testee)
+            whenever(testee.lateinitList[0]).thenReturn("test")
+
+            assertNotNull(testee.lateinitList)
+            assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
+            assertEquals("test", testee.lateinitList[0])
+        }
+
+        (1..200).map {
+            launch {
+                val delayTime = SecureRandom().nextInt(10).toLong()
+                delay(delayTime)
+                runMockAnnotationsInitMocks()
+            }
+        }.joinAll()
+    }
+
     @Test
     @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee1 / testee2)' is called")
     fun testInitMocksTwoTimesWithDifferentInstances() {
@@ -171,7 +200,7 @@ class MockAnnotationTest {
     fun testImmutableMock() {
         val testee = ClassWithImmutableMockProperty()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -184,7 +213,7 @@ class MockAnnotationTest {
     fun testImmutableKMock() {
         val testee = ClassWithImmutableKMockProperty()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -197,7 +226,7 @@ class MockAnnotationTest {
     fun testImmutableSpy() {
         val testee = ClassWithImmutableSpyProperty()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -210,7 +239,7 @@ class MockAnnotationTest {
     fun testImmutableCaptor() {
         val testee = ClassWithImmutableCaptorProperty()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -223,7 +252,7 @@ class MockAnnotationTest {
     fun testMockOfFinalClass() {
         val testee = ClassWithMockPropertyOfFinalClass()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -236,7 +265,7 @@ class MockAnnotationTest {
     fun testKMockOfFinalClass() {
         val testee = ClassWithKMockPropertyOfFinalClass()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -249,7 +278,7 @@ class MockAnnotationTest {
     fun testSpyOfFinalClass() {
         val testee = ClassWithSpyPropertyOfFinalClass()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -354,7 +383,7 @@ class MockAnnotationTest {
     fun testSpyOfSealedClass() {
         val testee = ClassWithSpyOfSealedClasses()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -367,7 +396,7 @@ class MockAnnotationTest {
     fun testMockOfInitializedSealedClass() {
         val testee = ClassWithSpyOfInitializedSealedClasses()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -380,7 +409,7 @@ class MockAnnotationTest {
     fun testMockOfInitializedSealedClassWithKMock() {
         val testee = ClassWithSpyOfInitializedSealedClassesWithKMock()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -419,7 +448,7 @@ class MockAnnotationTest {
     @Test
     @DisplayName("should mock mutable property in a companion object")
     fun testMockOfPropertyOfClassCompanionObject() {
-        val testee = ClassWithCompanionObjectAndMockProperty.Companion
+        val testee = ClassWithCompanionObjectAndMockProperty
 
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToMock[0]).thenReturn('k')
@@ -432,7 +461,7 @@ class MockAnnotationTest {
     @Test
     @DisplayName("should kmock mutable property in a companion object")
     fun testKMockOfPropertyOfClassCompanionObject() {
-        val testee = ClassWithCompanionObjectAndMockProperty.Companion
+        val testee = ClassWithCompanionObjectAndMockProperty
 
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToKMock[0]).thenReturn('k')
@@ -471,7 +500,7 @@ class MockAnnotationTest {
     @Test
     @DisplayName("should spy mutable property of companion object")
     fun testSpyOfPropertyOfClassCompanionObject() {
-        val testee = ClassWithCompanionObjectAndSpyProperty.Companion
+        val testee = ClassWithCompanionObjectAndSpyProperty
 
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToSpy[0]).thenReturn('k')
@@ -541,7 +570,7 @@ class MockAnnotationTest {
     fun testMockObjectProperty() {
         val testee = ClassWithMockObjectProperties()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -554,7 +583,7 @@ class MockAnnotationTest {
     fun testKMockObjectProperty() {
         val testee = ClassWithKMockObjectProperties()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
@@ -567,7 +596,7 @@ class MockAnnotationTest {
     fun testSpyObjectProperty() {
         val testee = ClassWithSpyObjectProperties()
 
-        val result = Assertions.assertThrows(MockitoException::class.java) {
+        val result = assertThrows(MockitoException::class.java) {
             KMockitoAnnotations.initMocks(testee)
         }
 
