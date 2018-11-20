@@ -27,19 +27,14 @@
 package org.mockito4kotlin.annotation
 
 import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.verify
 import org.mockito.exceptions.base.MockitoException
-import java.security.SecureRandom
-import kotlin.reflect.KFunction0
 
 class MockAnnotationTest {
 
@@ -106,93 +101,6 @@ class MockAnnotationTest {
 
         assertNotNull(testee.lateinitCaptor)
         assertEquals(0, testee.lateinitCaptor.allValues.size)
-    }
-
-    @Test
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee)' is called twice")
-    fun testInitMocksTwoTimes() {
-        val testee = ClassWithMutableProperties()
-
-        KMockitoAnnotations.initMocks(testee)
-        KMockitoAnnotations.initMocks(testee)
-        whenever(testee.lateinitList[0]).thenReturn("test")
-
-        assertNotNull(testee.lateinitList)
-        assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
-        assertEquals("test", testee.lateinitList[0])
-    }
-
-    @RepeatedTest(value = 15, name = "{displayName} {currentRepetition}/{totalRepetitions}")
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee)' is called many times in many treads")
-    fun testInitMocksManyTimesInDifferentThreads() {
-
-        fun runMockAnnotationsInitMocks() {
-            val sleepTime = SecureRandom().nextInt(10).toLong()
-            Thread.sleep(sleepTime)
-            val testee = ClassWithMutableProperties()
-
-            KMockitoAnnotations.initMocks(testee)
-            whenever(testee.lateinitList[0]).thenReturn("test")
-
-            assertNotNull(testee.lateinitList)
-            assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
-            assertEquals("test", testee.lateinitList[0])
-        }
-
-        fun fill(size: Int, kFunction0: KFunction0<Unit>): List<KFunction0<Unit>> {
-            val result = mutableListOf<KFunction0<Unit>>()
-            for (i in 1..size) result.add(kFunction0)
-            return result.toList()
-        }
-
-        val list = fill(200, ::runMockAnnotationsInitMocks)
-
-        list.parallelStream().forEach(KFunction0<Unit>::invoke)
-    }
-
-    @RepeatedTest(value = 5, name = "{displayName} {currentRepetition}/{totalRepetitions}")
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee)' is called many times in many coroutines")
-    fun testInitMocksManyTimesWithCoroutines() = runBlocking {
-
-        fun runMockAnnotationsInitMocks() {
-            val sleepTime = SecureRandom().nextInt(10).toLong()
-            Thread.sleep(sleepTime)
-            val testee = ClassWithMutableProperties()
-
-            KMockitoAnnotations.initMocks(testee)
-            whenever(testee.lateinitList[0]).thenReturn("test")
-
-            assertNotNull(testee.lateinitList)
-            assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
-            assertEquals("test", testee.lateinitList[0])
-        }
-
-        (1..200).map {
-            launch {
-                val delayTime = SecureRandom().nextInt(10).toLong()
-                delay(delayTime)
-                runMockAnnotationsInitMocks()
-            }
-        }.joinAll()
-    }
-
-    @Test
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee1 / testee2)' is called")
-    fun testInitMocksTwoTimesWithDifferentInstances() {
-        val testee1 = ClassWithMutableProperties()
-        val testee2 = ClassWithMutableProperties()
-
-        KMockitoAnnotations.initMocks(testee1)
-        KMockitoAnnotations.initMocks(testee2)
-        whenever(testee1.lateinitList[0]).thenReturn("test1")
-        whenever(testee2.lateinitList[0]).thenReturn("test2")
-
-        assertNotNull(testee1.lateinitList)
-        assertNotNull(testee2.lateinitList)
-        assertTrue(Mockito.mockingDetails(testee1.lateinitList).isMock)
-        assertTrue(Mockito.mockingDetails(testee2.lateinitList).isMock)
-        assertEquals("test1", testee1.lateinitList[0])
-        assertEquals("test2", testee2.lateinitList[0])
     }
 
     @Test
@@ -642,6 +550,59 @@ class MockAnnotationTest {
         assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isMock)
         assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isSpy)
         assertEquals('k', testee.propertyToSpy?.get(0))
+    }
+
+    @Test
+    @DisplayName("should mock property of class with suspend method")
+    fun testMockOfClassWithSuspendMethod() {
+        val testee = ClassWithMockOfClassWithSuspendMethod()
+        KMockitoAnnotations.initMocks(testee)
+
+        runBlocking {
+            testee.property.suspendCall()
+        }
+
+        runBlocking {
+            verify(testee.property).suspendCall()
+        }
+    }
+
+    @Test
+    @DisplayName("should mock property of class with suspend method with global RunBlocking")
+    fun testMockOfClassWithSuspendMethodWithGlobalRunBlocking() = runBlocking {
+        val testee = ClassWithMockOfClassWithSuspendMethod()
+        KMockitoAnnotations.initMocks(testee)
+
+        testee.property.suspendCall()
+
+        verify(testee.property).suspendCall()
+    }
+
+
+    @Test
+    @DisplayName("should kmock property of class with suspend method")
+    fun testKMockOfClassWithSuspendMethod() {
+        val testee = ClassWithKMockOfClassWithSuspendMethod()
+        KMockitoAnnotations.initMocks(testee)
+
+        runBlocking {
+            testee.property.suspendCall()
+        }
+
+        runBlocking {
+            verify(testee.property).suspendCall()
+        }
+    }
+
+    @Test
+    @DisplayName("should kmock property of class with suspend method with global RunBlocking")
+    fun testKMockOfClassWithSuspendMethodWithGlobalRunBlocking() = runBlocking {
+        val testee = ClassWithKMockOfClassWithSuspendMethod()
+        KMockitoAnnotations.initMocks(testee)
+
+        testee.property.suspendCall()
+
+        verify(testee.property).suspendCall()
     }
 
 }

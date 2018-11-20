@@ -258,11 +258,27 @@ class ClassWithSpyObjectProperties {
 
 }
 
+interface InterfaceWithSuspendMethod {
+    suspend fun suspendCall()
+}
+
+class ClassWithMockOfClassWithSuspendMethod {
+
+    @Mock
+    lateinit var property: InterfaceWithSuspendMethod
+}
+
+class ClassWithKMockOfClassWithSuspendMethod {
+
+    @KMock
+    lateinit var property: InterfaceWithSuspendMethod
+}
+
 data class DataClassWithMockPropertyInConstructor(@Mock var propertyToMock: CharSequence)
 
 data class DataClassWithKMockPropertyInConstructor(@KMock var propertyToKMock: CharSequence)
 
 data class DataClassWithSpyPropertyInConstructor(@Spy var propertyToSpy: CharSequence?)
 
-
+// inline class InlineClass(@Mock val propertyToMock: CharSequence)
 

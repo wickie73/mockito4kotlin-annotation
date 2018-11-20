@@ -31,9 +31,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import kotlin.reflect.full.memberProperties
 
-/**
- * @author Wilhelm Schulenburg
- */
 class KPropertyExtentionsTest {
 
     @Test

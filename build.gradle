@@ -45,6 +45,10 @@ dependencies {
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
 }
 
+compileKotlin {
+    kotlinOptions.freeCompilerArgs += ["-XXLanguage:+InlineClasses"]
+}
+
 test {
     useJUnitPlatform ()
 }
