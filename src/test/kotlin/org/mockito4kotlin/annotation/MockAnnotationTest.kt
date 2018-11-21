@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.exceptions.base.MockitoException
+import org.mockito.exceptions.misusing.MissingMethodInvocationException
 
 class MockAnnotationTest {
 
@@ -518,11 +519,12 @@ class MockAnnotationTest {
         val testee = DataClassWithMockPropertyInConstructor("mockito for kotlin")
 
         KMockitoAnnotations.initMocks(testee)
-        whenever(testee.propertyToMock[0]).thenReturn('k')
+        val result = assertThrows(MockitoException::class.java) {
+            whenever(testee.propertyToMock[0]).thenReturn('k')
+        }
 
-        assertNotNull(testee.propertyToMock)
-        assertFalse(Mockito.mockingDetails(testee.propertyToMock).isMock)
-        assertNotEquals('k', testee.propertyToMock[0])
+        assertEquals(MissingMethodInvocationException::class.java, result.javaClass)
+        assertThat(result).hasMessageContaining("when() requires an argument which has to be 'a method call on a mock'")
     }
 
     @Test
