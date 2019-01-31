@@ -44,7 +44,7 @@ class InjectMocksAnnotationTest {
     @Captor
     lateinit var captor: ArgumentCaptor<String>
     @InjectMocks
-    private val classUnderTest = ClassunderTest()
+    private lateinit var classUnderTest: ClassunderTest
     @InjectMocks
     private val classUnderTestWithNestedClass = ClassUnderTestWithNestedClass.NestedClass()
 
