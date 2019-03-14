@@ -51,9 +51,20 @@ class KArgumentCaptorWithNestedClassTest {
     fun testKCaptorWithNestedClass() {
         val person = createPerson()
 
-        personDAO.save(person)
+        personDAO.saveWithNonNullableArgument(person)
 
-        verify(personDAO).save(captor.capture())
+        verify(personDAO).saveWithNonNullableArgument(captor.capture())
+        assertEquals(person, captor.firstValue)
+    }
+
+    @Test
+    @DisplayName("should capture the person when class is a nested class of another with Nullable argument")
+    fun testKCaptorWithNestedClassWithNullableArgument() {
+        val person = null
+
+        personDAO.saveWithNullableArgument(person)
+
+        verify(personDAO).saveWithNullableArgument(captor.capture())
         assertEquals(person, captor.firstValue)
     }
 

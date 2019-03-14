@@ -49,10 +49,10 @@ class KArgumentCaptorWithInnerClassTest {
     @DisplayName("should capture the person when class is a inner class of another")
     fun testCaptureWithInnerClass() {
         val person = createPerson(ClassWithPerson().InnerSubPerson())
-        personDAO.save(person)
 
-        verify(personDAO).save(captor.capture())
+        personDAO.saveWithNonNullableArgument(person)
 
+        verify(personDAO).saveWithNonNullableArgument(captor.capture())
         assertEquals(person, captor.firstValue)
     }
 

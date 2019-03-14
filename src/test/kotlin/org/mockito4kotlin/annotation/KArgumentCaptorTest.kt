@@ -45,24 +45,35 @@ class KArgumentCaptorTest {
     }
 
     @Test
-    @DisplayName("should report an error if captor.capture() is called because it is null")
+    @DisplayName("should not report an error if captor.capture() is called because it is non nullable argument")
     fun testMockitoKCapture() {
         val address = createAddress()
-        addressDAO.save(address)
 
-        verify(addressDAO).save(captor.capture())
+        addressDAO.saveWithNonNullableArgument(address)
 
+        verify(addressDAO).saveWithNonNullableArgument(captor.capture())
         assertEquals(address, captor.firstValue)
     }
 
     @Test
-    @DisplayName("should report an error if captor.capture() is called because it is null")
+    @DisplayName("should not report an error if captor.capture() is called because it is nullable argument")
     fun testMockitoKCaptureWithNullableCaptureClass() {
         val address: Address? = createAddress()
-        addressDAO.register(address)
 
-        verify(addressDAO).register(captor.capture())
+        addressDAO.registerWithNullableArgument(address)
 
+        verify(addressDAO).registerWithNullableArgument(captor.capture())
+        assertEquals(address, captor.firstValue)
+    }
+
+    @Test
+    @DisplayName("should not report an error if captor.capture() is called because it is null")
+    fun testMockitoKCaptureWithNull() {
+        val address: Address? = null
+
+        addressDAO.registerWithNullableArgument(address)
+
+        verify(addressDAO).registerWithNullableArgument(captor.capture())
         assertEquals(address, captor.firstValue)
     }
 

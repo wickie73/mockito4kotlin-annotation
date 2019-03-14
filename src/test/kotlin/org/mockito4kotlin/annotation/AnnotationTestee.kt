@@ -32,132 +32,96 @@ import org.mockito.Mock
 import org.mockito.Spy
 
 class ClassWithMutableProperties {
-
     @Mock
     lateinit var lateinitList: List<String>
-
-
     @KMock
     lateinit var lateinitListK: List<String>
-
     @Spy
     lateinit var lateinitSet: Set<String>
+    @Captor
+    lateinit var lateinitCaptor: ArgumentCaptor<*>
 
     @Spy
     var initializedSet: Set<String> = HashSet()
-
-    @Captor
-    lateinit var lateinitCaptor: ArgumentCaptor<*>
 }
 
 class ClassWithImmutableMockProperty {
-
     @Mock
     val immutableList = listOf<String>()
-
-
 }
 
 class ClassWithImmutableKMockProperty {
-
     @KMock
     val immutableListK = listOf<String>()
-
 }
 
 class ClassWithImmutableSpyProperty {
-
     @Spy
     val immutableMap = mapOf<String, String>()
-
 }
 
 class ClassWithImmutableCaptorProperty {
-
     @Captor
     val captor = ArgumentCaptor.forClass(String::class.java)
-
 }
 
 class ClassWithMockPropertyOfFinalClass {
-
     @Mock
     lateinit var name: String
-
 }
 
 class ClassWithKMockPropertyOfFinalClass {
-
     @KMock
     lateinit var nameK: String
-
 }
 
 class ClassWithSpyPropertyOfFinalClass {
-
     @Spy
     lateinit var name: String
-
 }
 
 sealed class SealedClass {
-
     @Mock
     lateinit var lateinitList: List<String>
-
     @KMock
     lateinit var lateinitListK: List<String>
-
     @Spy
     lateinit var lateinitSet: Set<String>
-
 }
 
 data class DataSubClassOfSealedClass(val value: Int) : SealedClass() {
     @Mock
     lateinit var lateinitMap: Map<String, String>
-
 }
 
 data class DataSubClassOfSealedClassWithKMock(val value: Int) : SealedClass() {
-
     @KMock
     lateinit var lateinitMapK: Map<String, String>
 }
 
 class ClassWithMockOfSealedClasses {
-
     @Mock
     lateinit var sealedPropertyToMock: SealedClass
-
 }
 
 class ClassWithKMockOfSealedClasses {
-
     @KMock
     lateinit var sealedPropertyToKMock: SealedClass
-
 }
 
 class ClassWithSpyOfSealedClasses {
-
     @Spy
     lateinit var sealedPropertyToSpy: SealedClass
-
 }
 
 class ClassWithSpyOfInitializedSealedClasses {
-
     @Spy
     var sealedPropertyToSpy: SealedClass = DataSubClassOfSealedClass(34)
-
 }
 
 class ClassWithSpyOfInitializedSealedClassesWithKMock {
-
     @Spy
     var sealedPropertyToSpy: SealedClass = DataSubClassOfSealedClassWithKMock(34)
-
 }
 
 
@@ -168,94 +132,67 @@ var ClassWithExtensionProperty.value: List<String>
     set(value) = print(value)
 
 class ClassWithMockExtensionProperty {
-
     @Mock
     lateinit var propertyToMock: ClassWithExtensionProperty
-
     @KMock
     lateinit var propertyToKMock: ClassWithExtensionProperty
-
 }
 
 open class ClassWithCompanionObjectAndMockProperty {
     companion object {
-
         @Mock
         lateinit var propertyToMock: CharSequence
-
         @KMock
         lateinit var propertyToKMock: CharSequence
-
     }
 }
 
 class ClassWithCompanionObjectMockProperty {
-
     @Mock
     lateinit var propertyToMock: ClassWithCompanionObjectAndMockProperty
-
     @KMock
     lateinit var propertyToKMock: ClassWithCompanionObjectAndMockProperty
-
 }
 
 open class ClassWithCompanionObjectAndSpyProperty {
-
     companion object {
         @Spy
         lateinit var propertyToSpy: CharSequence
-
     }
-
 }
 
 class ClassWithCompanionObjectSpyProperty {
-
     @Spy
     lateinit var propertyToSpy: ClassWithCompanionObjectAndSpyProperty
-
 }
 
 object ObjectWithMockProperty {
-
     @Mock
     lateinit var propertyToMock: CharSequence
-
     @KMock
     lateinit var propertyToKMock: CharSequence
-
 }
-
 
 object ObjectWithSpyProperty {
-
     @Spy
     lateinit var propertyToSpy: CharSequence
-
 }
-
 
 object ObjectForTests
 
 class ClassWithMockObjectProperties {
-
     @Mock
     lateinit var lateinitObj: ObjectForTests
-
 }
 
 class ClassWithKMockObjectProperties {
-
     @KMock
     lateinit var lateinitObjK: ObjectForTests
-
 }
 
 class ClassWithSpyObjectProperties {
-
     @Spy
     lateinit var lateinitObj: ObjectForTests
-
 }
 
 interface InterfaceWithSuspendMethod {
@@ -263,13 +200,11 @@ interface InterfaceWithSuspendMethod {
 }
 
 class ClassWithMockOfClassWithSuspendMethod {
-
     @Mock
     lateinit var property: InterfaceWithSuspendMethod
 }
 
 class ClassWithKMockOfClassWithSuspendMethod {
-
     @KMock
     lateinit var property: InterfaceWithSuspendMethod
 }

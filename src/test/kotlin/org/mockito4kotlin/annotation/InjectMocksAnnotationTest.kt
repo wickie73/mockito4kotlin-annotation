@@ -43,6 +43,7 @@ class InjectMocksAnnotationTest {
     private lateinit var keyStringMap: Map<Number, CharSequence>
     @Captor
     lateinit var captor: ArgumentCaptor<String>
+
     @InjectMocks
     private lateinit var classUnderTest: ClassunderTest
     @InjectMocks
@@ -53,16 +54,21 @@ class InjectMocksAnnotationTest {
     fun testMockOfInjectMocks() {
         KMockitoAnnotations.initMocks(this)
 
-        assertNotNull(classUnderTest.numbers)
-        assertNotNull(classUnderTest.knumbers)
-        assertTrue(Mockito.mockingDetails(classUnderTest.numbers).isMock)
-        assertTrue(Mockito.mockingDetails(classUnderTest.knumbers).isMock)
-        assertFalse(Mockito.mockingDetails(classUnderTest.numbers).isSpy)
-        assertFalse(Mockito.mockingDetails(classUnderTest.knumbers).isSpy)
-        assertThat(classUnderTest.numbers).hasSize(0)
-        assertThat(classUnderTest.knumbers).hasSize(0)
-        assertEquals(classUnderTest.numbers, numbers)
-        assertEquals(classUnderTest.knumbers, knumbers)
+        val mockingDetails = Mockito.mockingDetails(classUnderTest.numbers)
+        assertTrue(mockingDetails.isMock)
+        assertFalse(mockingDetails.isSpy)
+        assertThat(classUnderTest.numbers).hasSize(0).isEqualTo(numbers)
+    }
+
+    @Test
+    @DisplayName("should kmock all properties of class 'ClassUnderTest' with @InjectMocks")
+    fun testKMockOfInjectMocks() {
+        KMockitoAnnotations.initMocks(this)
+
+        val mockingDetails = Mockito.mockingDetails(classUnderTest.knumbers)
+        assertTrue(mockingDetails.isMock)
+        assertFalse(mockingDetails.isSpy)
+        assertThat(classUnderTest.knumbers).hasSize(0).isEqualTo(knumbers)
     }
 
     @Test
@@ -70,11 +76,10 @@ class InjectMocksAnnotationTest {
     fun testSpyOfInjectMocks() {
         KMockitoAnnotations.initMocks(this)
 
-        assertNotNull(classUnderTest.keyStringMap2)
-        assertTrue(Mockito.mockingDetails(classUnderTest.keyStringMap2).isMock)
-        assertTrue(Mockito.mockingDetails(classUnderTest.keyStringMap2).isSpy)
-        assertThat(classUnderTest.keyStringMap2).hasSize(0)
-        assertEquals(classUnderTest.keyStringMap2, keyStringMap)
+        val mockingDetails = Mockito.mockingDetails(classUnderTest.keyStringMap2)
+        assertTrue(mockingDetails.isMock)
+        assertTrue(mockingDetails.isSpy)
+        assertThat(classUnderTest.keyStringMap2).hasSize(0).isEqualTo(keyStringMap)
     }
 
     @Test
@@ -114,16 +119,21 @@ class InjectMocksAnnotationTest {
     fun testMockOfInjectMocksOfNestedClass() {
         KMockitoAnnotations.initMocks(this)
 
-        assertNotNull(classUnderTestWithNestedClass.numbers)
-        assertNotNull(classUnderTestWithNestedClass.knumbers)
-        assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.numbers).isMock)
-        assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.knumbers).isMock)
-        assertFalse(Mockito.mockingDetails(classUnderTestWithNestedClass.numbers).isSpy)
-        assertFalse(Mockito.mockingDetails(classUnderTestWithNestedClass.knumbers).isSpy)
-        assertThat(classUnderTestWithNestedClass.numbers).hasSize(0)
-        assertThat(classUnderTestWithNestedClass.knumbers).hasSize(0)
-        assertEquals(classUnderTestWithNestedClass.numbers, numbers)
-        assertEquals(classUnderTestWithNestedClass.knumbers, knumbers)
+        val mockingDetails = Mockito.mockingDetails(classUnderTestWithNestedClass.numbers)
+        assertTrue(mockingDetails.isMock)
+        assertFalse(mockingDetails.isSpy)
+        assertThat(classUnderTestWithNestedClass.numbers).hasSize(0).isEqualTo(numbers)
+    }
+
+    @Test
+    @DisplayName("should kmock all properties of nested class 'ClassUnderTestWithNestedClass' with @InjectMocks")
+    fun testKMockOfInjectMocksOfNestedClass() {
+        KMockitoAnnotations.initMocks(this)
+
+        val mockingDetails = Mockito.mockingDetails(classUnderTestWithNestedClass.knumbers)
+        assertTrue(mockingDetails.isMock)
+        assertFalse(mockingDetails.isSpy)
+        assertThat(classUnderTestWithNestedClass.knumbers).hasSize(0).isEqualTo(knumbers)
     }
 
     @Test
@@ -131,11 +141,10 @@ class InjectMocksAnnotationTest {
     fun testSpyOfInjectMocksOfNestedClass() {
         KMockitoAnnotations.initMocks(this)
 
-        assertNotNull(classUnderTestWithNestedClass.keyStringMap)
-        assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.keyStringMap).isMock)
-        assertTrue(Mockito.mockingDetails(classUnderTestWithNestedClass.keyStringMap).isSpy)
-        assertThat(classUnderTestWithNestedClass.keyStringMap).hasSize(0)
-        assertEquals(classUnderTestWithNestedClass.keyStringMap, keyStringMap)
+        val mockingDetails = Mockito.mockingDetails(classUnderTestWithNestedClass.keyStringMap)
+        assertTrue(mockingDetails.isMock)
+        assertTrue(mockingDetails.isSpy)
+        assertThat(classUnderTestWithNestedClass.keyStringMap).hasSize(0).isEqualTo(keyStringMap)
     }
 
     class ClassunderTest {
@@ -162,7 +171,6 @@ class InjectMocksAnnotationTest {
             internal lateinit var keyStringMap: Map<Number, String>
         }
     }
-
 
 }
 

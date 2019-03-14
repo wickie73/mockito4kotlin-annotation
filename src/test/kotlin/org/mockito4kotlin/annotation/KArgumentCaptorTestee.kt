@@ -26,12 +26,13 @@
 package org.mockito4kotlin.annotation
 
 interface AddressDAO {
-    fun save(address: Address)
-    fun register(address: Address?)
+    fun saveWithNonNullableArgument(address: Address)
+    fun registerWithNullableArgument(address: Address?)
 }
 
 interface PersonDAO {
-    fun save(person: Person) {}
+    fun saveWithNonNullableArgument(person: Person) {}
+    fun saveWithNullableArgument(person: Person?) {}
 }
 
 class Address {
@@ -46,10 +47,7 @@ open class Person {
 }
 
 class ClassWithPerson {
-
     class SubPerson : Person()
-
     inner class InnerSubPerson : Person()
-
 }
 
