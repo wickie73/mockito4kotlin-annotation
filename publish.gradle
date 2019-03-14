@@ -76,29 +76,29 @@ javadoc.dependsOn dokka
 def pomConfig = {
     licenses {
         license {
-            name "MIT"
-            url licenseURL
+            name = "MIT"
+            url = licenseURL
         }
     }
     developers {
         developer {
-            id "wickie73"
-            name "Wilhelm Schulenburg"
+            id = "wickie73"
+            name = "Wilhelm Schulenburg"
         }
     }
 }
 
 publishing {
     publications {
-        Production(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
 
             artifact sourcesJar
             artifact javadocJar
 
-            groupId libGroupId
-            artifactId libArtifactId
-            version libVersion
+            groupId = libGroupId
+            artifactId = libArtifactId
+            version = libVersion
 
             pom.withXml {
                 def root = asNode()
@@ -127,7 +127,7 @@ bintray {
         vcsUrl = "https://github.com/wickie73/mockito4kotlin.annotation.git"
         version {
             name = libVersion
-            released  = new Date()
+            released = new Date()
         }
     }
 }
