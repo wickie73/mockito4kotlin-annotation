@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2018 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2019 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -32,7 +32,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
@@ -52,7 +53,6 @@ class KMockitoAnnotationsInitMocksTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitList[0]).thenReturn("test")
 
-        assertNotNull(testee.lateinitList)
         assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
         assertEquals("test", testee.lateinitList[0])
     }
@@ -62,14 +62,12 @@ class KMockitoAnnotationsInitMocksTest {
     fun testInitMocksManyTimesInDifferentThreads() {
 
         fun runMockAnnotationsInitMocks() {
-            val sleepTime = SecureRandom().nextInt(10).toLong()
-            Thread.sleep(sleepTime)
+            sleepRandomTime()
             val testee = ClassWithMutableProperties()
 
             KMockitoAnnotations.initMocks(testee)
             whenever(testee.lateinitList[0]).thenReturn("test")
 
-            assertNotNull(testee.lateinitList)
             assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
             assertEquals("test", testee.lateinitList[0])
         }
@@ -90,14 +88,12 @@ class KMockitoAnnotationsInitMocksTest {
     fun testInitMocksManyTimesWithCoroutines() = runBlocking {
 
         fun runMockAnnotationsInitMocks() {
-            val sleepTime = SecureRandom().nextInt(10).toLong()
-            Thread.sleep(sleepTime)
+            sleepRandomTime()
             val testee = ClassWithMutableProperties()
 
             KMockitoAnnotations.initMocks(testee)
             whenever(testee.lateinitList[0]).thenReturn("test")
 
-            assertNotNull(testee.lateinitList)
             assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
             assertEquals("test", testee.lateinitList[0])
         }
@@ -122,11 +118,14 @@ class KMockitoAnnotationsInitMocksTest {
         whenever(testee1.lateinitList[0]).thenReturn("test1")
         whenever(testee2.lateinitList[0]).thenReturn("test2")
 
-        assertNotNull(testee1.lateinitList)
-        assertNotNull(testee2.lateinitList)
         assertTrue(Mockito.mockingDetails(testee1.lateinitList).isMock)
         assertTrue(Mockito.mockingDetails(testee2.lateinitList).isMock)
         assertEquals("test1", testee1.lateinitList[0])
         assertEquals("test2", testee2.lateinitList[0])
+    }
+
+    private fun sleepRandomTime() {
+        val sleepTime = SecureRandom().nextInt(10).toLong()
+        Thread.sleep(sleepTime)
     }
 }

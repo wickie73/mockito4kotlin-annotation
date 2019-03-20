@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- *   Copyright (c) 2017-2018 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2019 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -47,8 +47,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitList[0]).thenReturn("test")
 
-        assertNotNull(testee.lateinitList)
-        assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
+        assertThatIsAMock(testee.lateinitList)
         assertEquals("test", testee.lateinitList[0])
     }
 
@@ -60,8 +59,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitListK[0]).thenReturn("test")
 
-        assertNotNull(testee.lateinitListK)
-        assertTrue(Mockito.mockingDetails(testee.lateinitListK).isMock)
+        assertThatIsAMock(testee.lateinitListK)
         assertEquals("test", testee.lateinitListK[0])
     }
 
@@ -73,9 +71,8 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitSet.size).thenReturn(5)
 
-        assertNotNull(testee.lateinitSet)
-        assertTrue(Mockito.mockingDetails(testee.lateinitSet).isMock)
-        assertTrue(Mockito.mockingDetails(testee.lateinitSet).isSpy)
+        assertThatIsAMock(testee.lateinitSet)
+        assertThatIsASpy(testee.lateinitSet)
         assertEquals(5, testee.lateinitSet.size)
     }
 
@@ -87,9 +84,8 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.initializedSet.size).thenReturn(5)
 
-        assertNotNull(testee.initializedSet)
-        assertTrue(Mockito.mockingDetails(testee.initializedSet).isMock)
-        assertTrue(Mockito.mockingDetails(testee.initializedSet).isSpy)
+        assertThatIsAMock(testee.initializedSet)
+        assertThatIsASpy(testee.initializedSet)
         assertEquals(5, testee.initializedSet.size)
     }
 
@@ -100,7 +96,6 @@ class MockAnnotationTest {
 
         KMockitoAnnotations.initMocks(testee)
 
-        assertNotNull(testee.lateinitCaptor)
         assertEquals(0, testee.lateinitCaptor.allValues.size)
     }
 
@@ -203,8 +198,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitList[0]).thenReturn("test")
 
-        assertNotNull(testee.lateinitList)
-        assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
+        assertThatIsAMock(testee.lateinitList)
         assertEquals("test", testee.lateinitList[0])
     }
 
@@ -216,8 +210,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitListK[0]).thenReturn("test")
 
-        assertNotNull(testee.lateinitListK)
-        assertTrue(Mockito.mockingDetails(testee.lateinitListK).isMock)
+        assertThatIsAMock(testee.lateinitListK)
         assertEquals("test", testee.lateinitListK[0])
     }
 
@@ -229,8 +222,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitMap["key"]).thenReturn("test")
 
-        assertNotNull(testee.lateinitMap)
-        assertTrue(Mockito.mockingDetails(testee.lateinitMap).isMock)
+        assertThatIsAMock(testee.lateinitMap)
         assertEquals("test", testee.lateinitMap["key"])
     }
 
@@ -242,8 +234,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitMapK["key"]).thenReturn("test")
 
-        assertNotNull(testee.lateinitMapK)
-        assertTrue(Mockito.mockingDetails(testee.lateinitMapK).isMock)
+        assertThatIsAMock(testee.lateinitMapK)
         assertEquals("test", testee.lateinitMapK["key"])
     }
 
@@ -255,10 +246,9 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.lateinitSet.contains("test")).thenReturn(true)
 
-        assertNotNull(testee.lateinitSet)
-        assertTrue(Mockito.mockingDetails(testee.lateinitSet).isMock)
-        assertTrue(Mockito.mockingDetails(testee.lateinitSet).isSpy)
-        assertEquals(true, testee.lateinitSet.contains("test"))
+        assertThatIsAMock(testee.lateinitSet)
+        assertThatIsASpy(testee.lateinitSet)
+        assertTrue(testee.lateinitSet.contains("test"))
     }
 
     @Test
@@ -269,8 +259,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.sealedPropertyToMock.toString()).thenReturn("test")
 
-        assertNotNull(testee.sealedPropertyToMock)
-        assertTrue(Mockito.mockingDetails(testee.sealedPropertyToMock).isMock)
+        assertThatIsAMock(testee.sealedPropertyToMock)
         assertEquals("test", testee.sealedPropertyToMock.toString())
     }
 
@@ -282,8 +271,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.sealedPropertyToKMock.toString()).thenReturn("test")
 
-        assertNotNull(testee.sealedPropertyToKMock)
-        assertTrue(Mockito.mockingDetails(testee.sealedPropertyToKMock).isMock)
+        assertThatIsAMock(testee.sealedPropertyToKMock)
         assertEquals("test", testee.sealedPropertyToKMock.toString())
     }
 
@@ -334,8 +322,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToMock.toString()).thenReturn("test")
 
-        assertNotNull(testee.propertyToMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToMock).isMock)
+        assertThatIsAMock(testee.propertyToMock)
         assertNotNull(testee.propertyToMock.value)
         assertEquals("test", testee.propertyToMock.toString())
     }
@@ -348,8 +335,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToKMock.toString()).thenReturn("test")
 
-        assertNotNull(testee.propertyToKMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertThatIsAMock(testee.propertyToKMock)
         assertNotNull(testee.propertyToKMock.value)
         assertEquals("test", testee.propertyToKMock.toString())
     }
@@ -362,8 +348,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToMock[0]).thenReturn('k')
 
-        assertNotNull(testee.propertyToMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToMock).isMock)
+        assertThatIsAMock(testee.propertyToMock)
         assertEquals('k', testee.propertyToMock[0])
     }
 
@@ -375,8 +360,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToKMock[0]).thenReturn('k')
 
-        assertNotNull(testee.propertyToKMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertThatIsAMock(testee.propertyToKMock)
         assertEquals('k', testee.propertyToKMock[0])
     }
 
@@ -388,8 +372,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToMock.toString()).thenReturn("test")
 
-        assertNotNull(testee.propertyToMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToMock).isMock)
+        assertThatIsAMock(testee.propertyToMock)
         assertEquals("test", testee.propertyToMock.toString())
     }
 
@@ -401,8 +384,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToKMock.toString()).thenReturn("test")
 
-        assertNotNull(testee.propertyToKMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertThatIsAMock(testee.propertyToKMock)
         assertEquals("test", testee.propertyToKMock.toString())
     }
 
@@ -414,9 +396,8 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToSpy[0]).thenReturn('k')
 
-        assertNotNull(testee.propertyToSpy)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isSpy)
+        assertThatIsAMock(testee.propertyToSpy)
+        assertThatIsASpy(testee.propertyToSpy)
         assertEquals('k', testee.propertyToSpy[0])
     }
 
@@ -428,9 +409,8 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToSpy.toString()).thenReturn("test")
 
-        assertNotNull(testee.propertyToSpy)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isSpy)
+        assertThatIsAMock(testee.propertyToSpy)
+        assertThatIsASpy(testee.propertyToSpy)
         assertEquals("test", testee.propertyToSpy.toString())
     }
 
@@ -442,8 +422,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToMock[0]).thenReturn('k')
 
-        assertNotNull(testee.propertyToMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToMock).isMock)
+        assertThatIsAMock(testee.propertyToKMock)
         assertEquals('k', testee.propertyToMock[0])
     }
 
@@ -455,8 +434,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToKMock[0]).thenReturn('k')
 
-        assertNotNull(testee.propertyToKMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertThatIsAMock(testee.propertyToKMock)
         assertEquals('k', testee.propertyToKMock[0])
     }
 
@@ -468,9 +446,8 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToSpy[0]).thenReturn('k')
 
-        assertNotNull(testee.propertyToSpy)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isSpy)
+        assertThatIsAMock(testee.propertyToSpy)
+        assertThatIsASpy(testee.propertyToSpy)
         assertEquals('k', testee.propertyToSpy[0])
     }
 
@@ -535,8 +512,7 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToKMock[0]).thenReturn('k')
 
-        assertNotNull(testee.propertyToKMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToKMock).isMock)
+        assertThatIsAMock(testee.propertyToKMock)
         assertEquals('k', testee.propertyToKMock[0])
     }
 
@@ -548,9 +524,8 @@ class MockAnnotationTest {
         KMockitoAnnotations.initMocks(testee)
         whenever(testee.propertyToSpy?.get(0)).thenReturn('k')
 
-        assertNotNull(testee.propertyToSpy)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isMock)
-        assertTrue(Mockito.mockingDetails(testee.propertyToSpy).isSpy)
+        assertThatIsAMock(testee.propertyToSpy)
+        assertThatIsASpy(testee.propertyToSpy)
         assertEquals('k', testee.propertyToSpy?.get(0))
     }
 
@@ -605,6 +580,14 @@ class MockAnnotationTest {
         testee.property.suspendCall()
 
         verify(testee.property).suspendCall()
+    }
+
+    private fun assertThatIsASpy(propertyToSpy: Any?) {
+        assertTrue(Mockito.mockingDetails(propertyToSpy).isSpy)
+    }
+
+    private fun assertThatIsAMock(propertyToSpy: Any?) {
+        assertTrue(Mockito.mockingDetails(propertyToSpy).isMock)
     }
 
 }

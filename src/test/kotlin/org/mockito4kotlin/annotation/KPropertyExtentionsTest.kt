@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2018 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2019 Wilhelm Schulenburg
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
  *  this software and associated documentation files (the "Software"), to deal in
@@ -26,7 +26,8 @@
 
 package org.mockito4kotlin.annotation
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import kotlin.reflect.full.memberProperties
@@ -40,8 +41,6 @@ class KPropertyExtentionsTest {
 
         val result = properties.elementAtOrNull(0)?.allAnnotations()
 
-        assertNotNull(result)
-        assertEquals(1, result?.size)
         assertTrue(result?.get(0) is Mock)
     }
 
@@ -52,8 +51,6 @@ class KPropertyExtentionsTest {
 
         val result = properties.elementAtOrNull(0)?.allAnnotations()
 
-        assertNotNull(result)
-        assertEquals(1, result?.size)
         assertTrue(result?.get(0) is KCaptor)
     }
 
@@ -65,10 +62,6 @@ class KPropertyExtentionsTest {
         val result1 = properties.elementAtOrNull(0)?.allAnnotations()
         val result2 = properties.elementAtOrNull(1)?.allAnnotations()
 
-        assertNotNull(result1)
-        assertNotNull(result2)
-        assertEquals(1, result1?.size)
-        assertEquals(1, result2?.size)
         assertTrue(result1?.get(0) is KCaptor)
         assertTrue(result2?.get(0) is Mock)
     }
@@ -80,7 +73,6 @@ class KPropertyExtentionsTest {
 
         val result = properties.elementAtOrNull(0)?.allAnnotations()
 
-        assertNotNull(result)
         assertEquals(2, result?.size)
         assertTrue(result?.get(0) is KCaptor)
         assertTrue(result?.get(1) is Mock)
