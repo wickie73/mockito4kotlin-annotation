@@ -5,8 +5,9 @@ All notable changes to this project will be documented in this file.
 
 ## [0.4.0] - 2019-07-10
 ### Added
-* `KMockitoAnnotations`
+* `KMockitoAnnotations`: initialized the use of [mockito annotations](https://static.javadoc.io/org.mockito/mockito-core/2.28.1/org/mockito/MockitoAnnotations.html).
 * `KMock` annotation for kotlin-based mocking. 
+* Support for kotlin coroutines.
 
 ### Changed
 * Updated kotlin 1.2.50 -> 1.3.41
@@ -14,10 +15,10 @@ All notable changes to this project will be documented in this file.
 * Updated mockito-kotlin 2.0.0-RC1 -> 2.1.0
 * Updated gradle 4.7 -> 5.2.1
 * Uses original _mockito's_ `@InjectMocks`, `@Mock`, `@Spy` and `@Captor` annotations.
-* Simplified tests
+* Simplified tests.
 
 ### Removed
-* `MockAnnotations` _(deprecated)_: Please use class `KMockitoAnnotations`
+* `MockAnnotations` _(deprecated)_: Please use class `KMockitoAnnotations`.
 
 ## [0.3.0] - 2018-10-06
 ### Changed
