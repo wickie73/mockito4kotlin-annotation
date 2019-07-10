@@ -114,7 +114,7 @@ publishing {
 bintray {
     user = project.hasProperty("user") ? project.property("user") : ''
     key = project.hasProperty("key") ? project.property("key") : ''
-    publications = ['Production']
+
     publish = true
     override = false
     dryRun = false
