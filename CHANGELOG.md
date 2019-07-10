@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 * Updated mockito 2.19 -> 2.28.1
 * Updated mockito-kotlin 2.0.0-RC1 -> 2.1.0
 * Updated gradle 4.7 -> 5.2.1
-* Uses original _mockito's_ `@InjectMocks`, `@Mock`, `@Spy` and `@Captor` annotations.
+* Uses original [mockito's](https://static.javadoc.io/org.mockito/mockito-core/2.28.1/org/mockito/Mockito.html) `@InjectMocks`, `@Mock`, `@Spy` and `@Captor` annotations.
 * Simplified tests.
 
 ### Removed
