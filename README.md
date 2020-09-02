@@ -5,16 +5,16 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
 ![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
-[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockito4kotlin.annotation/images/download.svg?version=0.4.0) ](https://bintray.com/wickie73/wickieMaven/org.mockito4kotlin.annotation/0.4.0/link)
+[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockito4kotlin.annotation/images/download.svg?version=0.4.1) ](https://bintray.com/wickie73/wickieMaven/org.mockito4kotlin.annotation/0.4.1/link)
 
-This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like 
-[Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) or [Mockito4k](https://github.com/tmurakami/mockito4k). 
+This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like
+[Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) or [Mockito4k](https://github.com/tmurakami/mockito4k).
 
-In this library the initialization of fields annotated with Mockito annotations by code  
+In this library the initialization of fields annotated with Mockito annotations by code
 `MockitoAnnotations.initMocks(testClass)`
- is replaced by  
+ is replaced by
 `KMockitoAnnotations.initMocks(testClass)`
-which is written in Kotlin and supports most of Kotlin specific features. 
+which is written in Kotlin and supports most of Kotlin specific features.
 It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.18.1/org/mockito/MockitoAnnotations.html).
 
 ## Content
@@ -26,7 +26,7 @@ It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.j
 Installing
 ----------
 
-Mockito Annotations for Kotlin is available on jcenter.   
+Mockito Annotations for Kotlin is available on jcenter.
 ### gradle
 ```gradle
 testCompile 'org.mockito4kotlin:annotation:0.4.x'
@@ -184,7 +184,7 @@ fun setUp() {
 fun testService() {
     // with Mockito
     `when`(addressList.size()).thenReturn(2)
-    
+
     // or with Mockito-Kotlin
     whenever(addressList.size()).thenReturn(2)
 
@@ -235,13 +235,13 @@ lateinit var captor: ArgumentCaptor<Address>
 KMockitoAnnotations.initMocks(this)
 // ...
 verify(addressDAO).save(captor.capture())
-// with: 
+// with:
 interface AddressDAO {
     fun save(address: Address?)  // 'Address?' has to be nullable here
 }
 ```
-With [Mockito-Kotlin2s](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about 
-`nullable` parameters: 
+With [Mockito-Kotlin2s](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about
+`nullable` parameters:
 ```kotlin
 @KCaptor
 lateinit var captor: KArgumentCaptor<Address>
@@ -249,7 +249,7 @@ lateinit var captor: KArgumentCaptor<Address>
 KMockitoAnnotations.initMocks(this)
 // ...
 verify(addressDAO).save(captor.capture())
-// with: 
+// with:
 interface AddressDAO {
     fun save(address: Address)  // 'Address' has not to be nullable here
 }

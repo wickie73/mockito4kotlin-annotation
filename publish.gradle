@@ -73,19 +73,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 javadoc.dependsOn dokka
 
-def pomConfig = {
-    licenses {
-        license {
-            name = "MIT"
-            url = licenseURL
-        }
-    }
-    developers {
-        developer {
-            id = "wickie73"
-            name = "Wilhelm Schulenburg"
-        }
-    }
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
@@ -93,19 +83,34 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
 
-            artifact sourcesJar
-            artifact javadocJar
-
             groupId = libGroupId
             artifactId = libArtifactId
             version = libVersion
 
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', descriptionPOM)
-                root.appendNode('name', title)
-                root.appendNode('url', 'https://github.com/wickie73/mockito4kotlin.annotation')
-                root.children().last() + pomConfig
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = title
+                description = descriptionPOM
+                url = 'https://github.com/wickie73/mockito4kotlin.annotation'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = licenseURL
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'wickie73'
+                        name = 'Wilhelm Schulenburg'
+                    }
+                }
             }
         }
     }
@@ -114,9 +119,9 @@ publishing {
 bintray {
     user = project.hasProperty("user") ? project.property("user") : ''
     key = project.hasProperty("key") ? project.property("key") : ''
-    publications = ['Production']
-    publish = true
-    override = false
+    publications = ['mavenJava']
+    publish = false
+    override = true
     dryRun = false
 
     pkg {
@@ -124,7 +129,12 @@ bintray {
         name = project.name
         desc = descriptionPOM
         licenses = ["MIT"]
+        websiteUrl = "https://github.com/wickie73/mockito4kotlin.annotation"
+        issueTrackerUrl = "https://github.com/wickie73/mockito4kotlin.annotation/issues"
         vcsUrl = "https://github.com/wickie73/mockito4kotlin.annotation.git"
+        publicDownloadNumbers = true
+        githubRepo = "wickie73/mockito4kotlin.annotation"
+        githubReleaseNotesFile = "README.md"
         version {
             name = libVersion
             released = new Date()
