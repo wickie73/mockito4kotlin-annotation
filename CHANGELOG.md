@@ -3,10 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.1] - 2020-09-02
+* Fixed issue #2: Could not resolve org.mockito4kotlin:annotation:0.4.0
+
 ## [0.4.0] - 2019-07-10
 ### Added
 * `KMockitoAnnotations`: initialized the use of [mockito annotations](https://static.javadoc.io/org.mockito/mockito-core/2.28.1/org/mockito/MockitoAnnotations.html).
-* `KMock` annotation for kotlin-based mocking. 
+* `KMock` annotation for kotlin-based mocking.
 * Support for kotlin coroutines.
 
 ### Changed
