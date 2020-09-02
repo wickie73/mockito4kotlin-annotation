@@ -73,11 +73,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 javadoc.dependsOn dokka
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -86,7 +81,10 @@ publishing {
             groupId = libGroupId
             artifactId = libArtifactId
             version = libVersion
-
+			
+			artifact sourcesJar
+            artifact javadocJar
+			
             versionMapping {
                 usage('java-api') {
                     fromResolutionOf('runtimeClasspath')
