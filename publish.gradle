@@ -84,7 +84,7 @@ publishing {
 			
 			artifact sourcesJar
             artifact javadocJar
-			
+
             versionMapping {
                 usage('java-api') {
                     fromResolutionOf('runtimeClasspath')
