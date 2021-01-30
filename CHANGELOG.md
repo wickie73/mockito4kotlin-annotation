@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+* Support 'lenient' setting in KMock annotation (#5)
+* Updated kotlin 1.3.41 -> 1.4.21
+* Updated mockito 2.28.1 -> 2.28.2
+* Updated mockito-kotlin 2.1.0 -> 2.2.0
 
 ## [0.4.1] - 2020-09-02
 * Fixed issue #2: Could not resolve org.mockito4kotlin:annotation:0.4.0
