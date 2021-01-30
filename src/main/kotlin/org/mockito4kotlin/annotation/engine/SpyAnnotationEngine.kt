@@ -1,7 +1,8 @@
 /*
+ *
  * The MIT License
  *
- *   Copyright (c) 2017-2019 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2021 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,6 +22,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 package org.mockito4kotlin.annotation.engine
@@ -39,16 +41,16 @@ import kotlin.reflect.jvm.javaField
 
 internal class SpyAnnotationEngine : AbstractAnnotationEngine() {
 
-    override fun process(anyWithMocks: Any, property: KProperty<*>) {
+    override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
         checkImmutableProperties(property)
         checkNumberOfMockAnnotations(property)
-        checkPrivateOrInternalInnerClass(Spy::class, property, anyWithMocks)
+        checkPrivateOrInternalInnerClass(Spy::class, property, anyInstanceWithMocks)
         checkPrivateOrInternalCompanionObjects(Spy::class, property)
         checkSealedClass(Spy::class, property)
 
-        val instanceValue = if (property.isLateinit) null else property.getter.call(anyWithMocks)
-        assignObjectToProperty(property as KMutableProperty<*>, anyWithMocks, createSpy(instanceValue, property))
+        val instanceValue = if (property.isLateinit) null else property.getter.call(anyInstanceWithMocks)
+        assignObjectToProperty(property as KMutableProperty<*>, anyInstanceWithMocks, createSpy(instanceValue, property))
     }
 
     private fun createSpy(instanceValue: Any?, property: KProperty<*>): Any =

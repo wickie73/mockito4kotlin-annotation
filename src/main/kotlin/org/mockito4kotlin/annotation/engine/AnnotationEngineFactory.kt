@@ -1,7 +1,8 @@
 /*
+ *
  * The MIT License
  *
- *   Copyright (c) 2017-2019 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2021 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,6 +22,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 package org.mockito4kotlin.annotation.engine
@@ -36,8 +38,8 @@ internal object AnnotationEngineFactory {
 
     internal fun create(annotation: Annotation?): AnnotationEngine {
         return when (annotation) {
-            is Mock -> MockAnnotationEngine()
-            is KMock -> KMockAnnotationEngine()
+            is Mock -> MockAnnotationEngine(Mock::class)
+            is KMock -> MockAnnotationEngine(KMock::class)
             is Spy -> SpyAnnotationEngine()
             is Captor -> CaptorAnnotationEngine()
             is KCaptor -> KCaptorAnnotationEngine()

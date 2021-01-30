@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2018 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2021 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -39,14 +39,14 @@ import kotlin.reflect.jvm.isAccessible
 
 internal class KMockAnnotationEngine : AbstractAnnotationEngine() {
 
-    override fun process(anyWithMocks: Any, property: KProperty<*>) {
+    override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
         checkImmutableProperties(property)
         checkNumberOfMockAnnotations(property)
-        checkPrivateOrInternalInnerClass(KMock::class, property, anyWithMocks)
+        checkPrivateOrInternalInnerClass(KMock::class, property, anyInstanceWithMocks)
         checkPrivateOrInternalCompanionObjects(KMock::class, property)
         checkDelegateProperty(KMock::class, property )
 
-        assignObjectToProperty(property as KMutableProperty<*>, anyWithMocks, MockAnnotationProcessor.createMock(property))
+        assignObjectToProperty(property as KMutableProperty<*>, anyInstanceWithMocks, MockAnnotationProcessor.createMock(property))
     }
 }

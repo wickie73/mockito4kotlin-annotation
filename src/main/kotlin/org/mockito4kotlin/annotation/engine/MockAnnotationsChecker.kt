@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2018 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2021 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -38,7 +38,7 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.*
 import kotlin.reflect.jvm.javaField
 
-internal object MockAnnotationsChecker {
+internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
 
     private val injectMocksExample = """
                              |Examples of correct usage of @InjectMocks:
