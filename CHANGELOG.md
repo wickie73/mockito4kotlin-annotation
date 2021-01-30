@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.4.2]
 ### Changed
 * Support 'lenient' setting in KMock annotation (#5)
 * Updated kotlin 1.3.41 -> 1.4.21

@@ -5,9 +5,9 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
 ![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
-[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockito4kotlin.annotation/images/download.svg?version=0.4.1) ](https://bintray.com/wickie73/wickieMaven/org.mockito4kotlin.annotation/0.4.1/link)
+[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockito4kotlin.annotation/images/download.svg?version=0.4.2) ](https://bintray.com/wickie73/wickieMaven/org.mockito4kotlin.annotation/0.4.2/link)
 
-This is a small Kotlin library which supports Annotations for Mockito or Kotlin libraries based on Mockito like
+This is a small Kotlin library which supports Annotations for Mockito 2.x or Kotlin libraries based on Mockito like
 [Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) or [Mockito4k](https://github.com/tmurakami/mockito4k).
 
 In this library the initialization of fields annotated with Mockito annotations by code
@@ -240,7 +240,7 @@ interface AddressDAO {
     fun save(address: Address?)  // 'Address?' has to be nullable here
 }
 ```
-With [Mockito-Kotlin2s](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about
+With [Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about
 `nullable` parameters:
 ```kotlin
 @KCaptor
