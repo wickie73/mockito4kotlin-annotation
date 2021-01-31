@@ -13,7 +13,7 @@ buildscript {
         dokka_version = '0.9.18'
         bintray_version = '1.8.5'
         android_maven_gradle_version = '2.1'
-        gradle_version = '5.2.1'
+        gradle_version = '6.8.1'
         encoding = 'UTF-8'
     }
 
