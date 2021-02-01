@@ -1,7 +1,8 @@
 /*
+ *
  * The MIT License
  *
- *   Copyright (c) 2017-2018 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2021 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,30 +22,31 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 package org.mockito4kotlin.annotation.engine
 
-import org.mockito.Mock
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkDelegateProperty
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalCompanionObjects
 import org.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalInnerClass
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
 
-internal class MockAnnotationEngine : AbstractAnnotationEngine() {
+internal class MockAnnotationEngine(private val annotationClass: KClass<out Any>) : AbstractAnnotationEngine() {
 
-    override fun process(anyWithMocks: Any, property: KProperty<*>) {
+    override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
         checkImmutableProperties(property)
         checkNumberOfMockAnnotations(property)
-        checkPrivateOrInternalInnerClass(Mock::class, property, anyWithMocks)
-        checkPrivateOrInternalCompanionObjects(Mock::class, property)
-        checkDelegateProperty(Mock::class, property )
+        checkPrivateOrInternalInnerClass(annotationClass, property, anyInstanceWithMocks)
+        checkPrivateOrInternalCompanionObjects(annotationClass, property)
+        checkDelegateProperty(annotationClass, property)
 
-        assignObjectToProperty(property as KMutableProperty<*>, anyWithMocks, MockAnnotationProcessor.createMock(property))
+        assignObjectToProperty(property as KMutableProperty<*>, anyInstanceWithMocks, MockAnnotationProcessor.createMock(property))
     }
 }

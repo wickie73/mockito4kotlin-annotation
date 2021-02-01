@@ -1,5 +1,5 @@
 .DS_Store
-.gradle/
+.gradle
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
 .idea/sonarlint/
@@ -12,7 +12,7 @@
 /.idea/dictionaries/*.xml
 !gradle-wrapper.jar
 *.iml
-build/
+build
 out/
 libraries
 modules

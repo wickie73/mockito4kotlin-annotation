@@ -1,7 +1,8 @@
 /*
+ *
  * The MIT License
  *
- *   Copyright (c) 2017-2019 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2021 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,6 +22,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 package org.mockito4kotlin.annotation.engine
@@ -38,16 +40,16 @@ import kotlin.reflect.jvm.isAccessible
 
 internal class InjectMocksAnnotationEngine : AbstractAnnotationEngine() {
 
-    override fun process(anyWithMocks: Any, property: KProperty<*>) {
+    override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
         checkInjectMocksProperty(property)
 
-        val instanceToBeMocked = property.getter.call(anyWithMocks) ?: createAndAssignInstanceOf(property, anyWithMocks)
+        val instanceToBeMocked = property.getter.call(anyInstanceWithMocks) ?: createAndAssignInstanceOf(property, anyInstanceWithMocks)
         val mockCandidates = instanceToBeMocked::class.memberProperties.filterIsInstance<KMutableProperty<*>>()
-        val mockPropertyMatcher = MockPropertyMatcher(mockedPropertiesAssigned, mockCandidates)
+        val mockPropertyMatcher = MockPropertyMatcher(mockedAssignedProperties, mockCandidates)
         mockCandidates.forEach { mockCandidate ->
-            mockedPropertiesAssigned.properties().filter { mockProperty -> mockPropertyMatcher.match(mockProperty, mockCandidate) }
-                .forEach { property -> mockCandidate.setter.call(instanceToBeMocked, mockedPropertiesAssigned[property]) }
+            mockedAssignedProperties.properties().filter { mockProperty -> mockPropertyMatcher.match(mockProperty, mockCandidate) }
+                .forEach { property -> mockCandidate.setter.call(instanceToBeMocked, mockedAssignedProperties[property]) }
         }
     }
 

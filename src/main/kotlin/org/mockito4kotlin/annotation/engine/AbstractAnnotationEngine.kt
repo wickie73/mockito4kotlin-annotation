@@ -1,7 +1,8 @@
 /*
+ *
  * The MIT License
  *
- *   Copyright (c) 2017-2019 Wilhelm Schulenburg
+ *   Copyright (c) 2017-2021 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,6 +22,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 package org.mockito4kotlin.annotation.engine
@@ -30,15 +32,15 @@ import kotlin.reflect.KMutableProperty
 
 internal abstract class AbstractAnnotationEngine : AnnotationEngine {
 
-    protected lateinit var mockedPropertiesAssigned: MockPropertyCollector
+    protected lateinit var mockedAssignedProperties: MockPropertyCollector
 
-    override fun inject(mockedPropertiesAssigned: MockPropertyCollector): AnnotationEngine {
-        this.mockedPropertiesAssigned = mockedPropertiesAssigned
+    override fun inject(mockedAssignedProperties: MockPropertyCollector): AnnotationEngine {
+        this.mockedAssignedProperties = mockedAssignedProperties
         return this
     }
 
     protected fun assignObjectToProperty(property: KMutableProperty<*>, anyWithMocks: Any, anyObject: Any) {
         property.setter.call(anyWithMocks, anyObject)
-        mockedPropertiesAssigned.register(property, anyObject)
+        mockedAssignedProperties.register(property, anyObject)
     }
 }
