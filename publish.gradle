@@ -1,5 +1,6 @@
 apply plugin: "com.jfrog.bintray"
 apply plugin: "maven-publish"
+apply plugin: "org.jetbrains.dokka"
 
 ext {
     libGroupId = 'org.mockito4kotlin'
@@ -40,75 +41,79 @@ jar.manifest {
         "Specification-Vendor": "wickie73",
         "Export-Package": "org.mockito4kotlin.annotation",
         "Import-Package": 'com.nhaarman.mockitokotlin2;version="[2.0.0,3)"',
-        "Require-Bundle": 'org.mockito;version="[2.24,3)",org.jetbrains.kotlin;version="[1.3.0,1.5)"',
+        "Require-Bundle": 'org.mockito;version="[2.13,4)",org.jetbrains.kotlin;version="[1.3.0,1.5)"',
         "Build-Jdk": java_version
     )
 }
 
-dokka {
-    outputFormat = "html"
-    outputDirectory = "build/dokka"
-
-    linkMapping {
-        dir = "src/main/kotlin"
-        url = "https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin"
-        suffix = "#L"
+dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            displayName.set("JVM")
+            jdkVersion.set(8)
+            sourceLink {
+                remoteUrl.set(java.net.URL("https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin"))
+                remoteLineSuffix.set("#L")
+            }
+            perPackageOption {
+                matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
+                suppress.set(true)
+            }
+        }
     }
-
-    jdkVersion = 8
 }
 
 task sourcesJar(type: Jar) {
-    classifier = "sources"
     manifest = project.manifest {
         from sourceManifest
     }
     from sourceSets.main.allSource
 }
 
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
-    from dokka.outputDirectory
+    from dokkaHtml.outputDirectory
 }
 
-javadoc.dependsOn dokka
+javadoc.dependsOn dokkaHtml
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name = "MIT"
+            url = licenseURL
+        }
+    }
+    developers {
+        developer {
+            id = "wickie73"
+            name = "Wilhelm Schulenburg"
+        }
+    }
+}
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
 
+            artifact sourcesJar
+
             groupId = libGroupId
             artifactId = libArtifactId
             version = libVersion
 
-			artifact sourcesJar
-            artifact javadocJar
-
-            versionMapping {
-                usage('java-api') {
-                    fromResolutionOf('runtimeClasspath')
-                }
-                usage('java-runtime') {
-                    fromResolutionResult()
-                }
-            }
-            pom {
-                name = title
-                description = descriptionPOM
-                url = 'https://github.com/wickie73/mockito4kotlin.annotation'
-                licenses {
-                    license {
-                        name = 'MIT'
-                        url = licenseURL
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'wickie73'
-                        name = 'Wilhelm Schulenburg'
-                    }
-                }
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', descriptionPOM)
+                root.appendNode('name', title)
+                root.appendNode('url', 'https://github.com/wickie73/mockito4kotlin.annotation')
+                root.children().last() + pomConfig
             }
         }
     }
@@ -117,10 +122,11 @@ publishing {
 bintray {
     user = project.hasProperty("user") ? project.property("user") : ''
     key = project.hasProperty("key") ? project.property("key") : ''
-    publications = ['mavenJava']
+
     publish = false
     override = true
     dryRun = false
+    publications = ['mavenJava']
 
     pkg {
         repo = "wickieMaven"
