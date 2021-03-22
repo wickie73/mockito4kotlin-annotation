@@ -5,7 +5,7 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
 
 ![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
-[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockito4kotlin.annotation/images/download.svg?version=0.4.2) ](https://bintray.com/wickie73/wickieMaven/org.mockito4kotlin.annotation/0.4.2/link)
+[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockitokotlin.annotation/images/download.svg?version=0.4.5) ](https://bintray.com/wickie73/wickieMaven/org.mockitokotlin.annotation/0.4.5/link)
 
 This is a small Kotlin library which supports Annotations for Mockito 2.x or Kotlin libraries based on Mockito like
 [Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) or [Mockito4k](https://github.com/tmurakami/mockito4k).
@@ -29,25 +29,17 @@ Installing
 Mockito Annotations for Kotlin is available on jcenter.
 ### gradle
 ```gradle
-testCompile 'org.mockito4kotlin:annotation:0.4.x'
+testCompile 'io.github.wickie73.mockito4kotlin:annotation:0.4.x'
 ```
 ### maven
 ```xml
 <dependency>
-    <groupId>org.mockito4kotlin</groupId>
-    <artifactId>annotation</artifactId>
+    <groupId>io.github.wickie73</groupId>
+    <artifactId>mockito4kotlin.annotation</artifactId>
     <version>0.4.x</version>
     <scope>test</scope>
 </dependency>
 
-<repository>
-    <snapshots>
-        <enabled>false</enabled>
-    </snapshots>
-    <id>bintray-wickie73-maven</id>
-    <name>bintray</name>
-    <url>https://bintray.com/wickie73/wickieMaven</url>
-</repository>
 ```
 Examples
 --------
