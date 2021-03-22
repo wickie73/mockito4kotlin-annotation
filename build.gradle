@@ -11,8 +11,6 @@ buildscript {
         mockito_kotlin_version = '2.2.0'
         assertj_version = '3.18.1'
         dokka_version = '0.9.18'
-        bintray_version = '1.8.5'
-        android_maven_gradle_version = '2.1'
         gradle_version = '6.8.1'
         encoding = 'UTF-8'
     }
@@ -24,8 +22,6 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_version"
-        classpath "com.github.dcendents:android-maven-gradle-plugin:$android_maven_gradle_version"
     }
 }
 

@@ -1,7 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.4.2]
+## [0.4.5] - 2021-03-22
+* Switch from Bintray/JCenter to maven central (#7)
+* renamed groupId from org.mockito4kotlin to io.github.wickie73
+* API changes: renamed packages from `org.mockito4kotlin.annotation` to `io.github.wickie73.mockito4kotlin.annotation`
+
+## [0.4.2] - 2021-01-31
 ### Changed
 * Support 'lenient' setting in KMock annotation (#5)
 * Updated kotlin 1.3.41 -> 1.4.21
@@ -10,7 +15,7 @@ All notable changes to this project will be documented in this file.
 * Updated gradle 5.2.1-> 6.8.1
 
 ## [0.4.1] - 2020-09-02
-* Fixed issue #2: Could not resolve org.mockito4kotlin:annotation:0.4.0
+* Fixed issue #2: Could not resolve annotation:0.4.0
 
 ## [0.4.0] - 2019-07-10
 ### Added
