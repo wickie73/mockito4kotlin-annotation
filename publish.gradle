@@ -88,6 +88,9 @@ apply plugin: 'maven'
 
 // Build, sign, and upload
 uploadArchives {
+    def ossrhUser = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : ''
+    def ossrhPwd = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : ''
+
     repositories {
         mavenDeployer {
 
@@ -103,11 +106,14 @@ uploadArchives {
             }
 
             // Destination
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+            if (ossrhUser != '') {
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUser, password: ossrhPwd)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
             }
 
             // Add required metadata to POM
