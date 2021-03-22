@@ -99,10 +99,7 @@ uploadArchives {
 
             // locale
             repositories {
-                maven {
-                    name = 'myRepo'
-                    url = "file://${buildDir}/repo"
-                }
+                maven { url = "file://${buildDir}/repo" }
             }
 
             // Destination
@@ -112,7 +109,7 @@ uploadArchives {
                 }
 
                 snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                    authentication(userName: ossrhUser, password: ossrhPwd)
                 }
             }
 
