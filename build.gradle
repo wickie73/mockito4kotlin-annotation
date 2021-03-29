@@ -10,7 +10,7 @@ buildscript {
         mockito_version = '2.28.2'
         mockito_kotlin_version = '2.2.0'
         assertj_version = '3.18.1'
-        dokka_version = '0.9.18'
+        dokka_version = '1.4.30'
         gradle_version = '6.8.1'
         encoding = 'UTF-8'
     }

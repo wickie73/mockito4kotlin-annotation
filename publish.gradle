@@ -43,18 +43,18 @@ jar.manifest {
     )
 }
 
-// javadoc / dokka
-dokka {
-    outputFormat = "html"
-    outputDirectory = "build/dokka"
-
-    linkMapping {
-        dir = "src/main/kotlin"
-        url = "https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin"
-        suffix = "#L"
+// javadoc & dokka
+dokkaHtml {
+    dokkaSourceSets {
+        commonMain {}
+        jvmMain {
+            sourceLink {
+                localDirectory.set(file("src/main/kotlin"))
+                remoteUrl.set(uri("https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin").toURL())
+                remoteLineSuffix.set("#L")
+            }
+        }
     }
-
-    jdkVersion = 8
 }
 
 task sourcesJar(type: Jar) {
@@ -67,10 +67,10 @@ task sourcesJar(type: Jar) {
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = "javadoc"
-    from dokka.outputDirectory
+    from dokkaHtml.outputDirectory
 }
 
-javadoc.dependsOn dokka
+javadoc.dependsOn dokkaHtml
 
 artifacts {
     archives javadocJar, sourcesJar
@@ -98,17 +98,14 @@ uploadArchives {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
             // locale
-            repositories {
-                maven { url = "file://${buildDir}/repo" }
-            }
+            repositories { maven { url = "file://${buildDir}/repo" } }
 
             // Destination
             if (ossrhUser != '') {
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
                     authentication(userName: ossrhUser, password: ossrhPwd)
                 }
-
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
                     authentication(userName: ossrhUser, password: ossrhPwd)
                 }
             }
@@ -126,6 +123,7 @@ uploadArchives {
 
                 scm {
                     connection 'scm:git:git://github.com/wickie73/mockito4kotlin.annotation.git'
+                    developerConnection 'scm:git:https://github.com/wickie73/mockito4kotlin.annotation.git'
                     url 'https://github.com/wickie73/mockito4kotlin.annotation/tree/main'
                 }
 
