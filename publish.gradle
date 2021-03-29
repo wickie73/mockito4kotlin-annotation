@@ -77,11 +77,75 @@ artifacts {
 }
 
 // Signing
-apply plugin: 'signing'
 signing {
     sign configurations.archives
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = libGroupId
+            artifactId = libArtifactId
+            version = libVersion
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = title
+                description = descriptionPOM
+                url = projectURL
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = licenseURL
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'wickie73'
+                        name = 'Wilhelm Schulenburg'
+                    }
+                }
+            }
+        }
+    }
+    // locale
+    repositories { maven { url = "file://${buildDir}/repo" } }
+}
+
+// Avoid generation of the module metadata so that we don't have to publish an additional file
+// and keep the build logic simple.
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
+//fleshes out problems with Maven pom generation when building
+tasks.build.dependsOn('publishJavaLibraryPublicationToMavenLocal')
+
+// Deploying
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+
+            username = project.property("ossrhUsername")
+            password = project.property("ossrhPassword")
+        }
+    }
+
+}
 
 // Deploying
 apply plugin: 'maven'
