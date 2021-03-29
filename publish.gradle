@@ -1,11 +1,11 @@
 ext {
     libGroupId = 'io.github.wickie73'
-    libArtifactId = 'mockito4kotlin.annotation'
+    libArtifactId = 'mockito4kotlin-annotation'
     libVersion = version
     title = 'Mockito Annotations for Kotlin'
-    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
+    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin.'
     licenseURL = 'https://opensource.org/licenses/MIT'
-    projectURL = 'https://github.com/wickie73/mockito4kotlin.annotation'
+    projectURL = 'https://github.com/wickie73/mockito4kotlin-annotation'
 }
 
 ext.sourceManifest = manifest {
@@ -50,7 +50,7 @@ dokkaHtml {
         jvmMain {
             sourceLink {
                 localDirectory.set(file("src/main/kotlin"))
-                remoteUrl.set(uri("https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin").toURL())
+                remoteUrl.set(uri("https://github.com/wickie73/mockito4kotlin-annotation/tree/master/src/main/kotlin").toURL())
                 remoteLineSuffix.set("#L")
             }
         }
@@ -186,9 +186,9 @@ uploadArchives {
                 version libVersion
 
                 scm {
-                    connection 'scm:git:git://github.com/wickie73/mockito4kotlin.annotation.git'
-                    developerConnection 'scm:git:https://github.com/wickie73/mockito4kotlin.annotation.git'
-                    url 'https://github.com/wickie73/mockito4kotlin.annotation/tree/main'
+                    connection 'scm:git:git://github.com/wickie73/mockito4kotlin-annotation.git'
+                    developerConnection 'scm:git:https://github.com/wickie73/mockito4kotlin-annotation.git'
+                    url 'https://github.com/wickie73/mockito4kotlin-annotation/tree/main'
                 }
 
                 licenses {
