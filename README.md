@@ -4,8 +4,7 @@
 ![Mockito](https://img.shields.io/badge/Mockito-2.28%2B-blue.svg?longCache=true)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin-annotation/blob/master/LICENSE)
 
-![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin-annotation.svg?longCache=true)
-[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockitokotlin.annotation/images/download.svg?version=0.4.5) ](https://bintray.com/wickie73/wickieMaven/org.mockitokotlin.annotation/0.4.5/link)
+![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
 
 This is a small Kotlin library which supports Annotations for Mockito 2.x or Kotlin libraries based on Mockito like
 [Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/).
