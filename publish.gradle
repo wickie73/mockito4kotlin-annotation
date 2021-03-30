@@ -1,13 +1,11 @@
-apply plugin: "com.jfrog.bintray"
-apply plugin: "maven-publish"
-
 ext {
-    libGroupId = 'org.mockito4kotlin'
-    libArtifactId = 'annotation'
+    libGroupId = 'io.github.wickie73'
+    libArtifactId = 'mockito4kotlin-annotation'
     libVersion = version
     title = 'Mockito Annotations for Kotlin'
-    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
+    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin.'
     licenseURL = 'https://opensource.org/licenses/MIT'
+    projectURL = 'https://github.com/wickie73/mockito4kotlin-annotation'
 }
 
 ext.sourceManifest = manifest {
@@ -38,24 +36,25 @@ jar.manifest {
         "Specification-Title": title,
         "Specification-Version": version,
         "Specification-Vendor": "wickie73",
-        "Export-Package": "org.mockito4kotlin.annotation",
+        "Export-Package": "io.github.wickie73.mockito4kotlin.annotation",
         "Import-Package": 'com.nhaarman.mockitokotlin2;version="[2.0.0,3)"',
         "Require-Bundle": 'org.mockito;version="[2.24,3)",org.jetbrains.kotlin;version="[1.3.0,1.5)"',
         "Build-Jdk": java_version
     )
 }
 
-dokka {
-    outputFormat = "html"
-    outputDirectory = "build/dokka"
-
-    linkMapping {
-        dir = "src/main/kotlin"
-        url = "https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin"
-        suffix = "#L"
+// javadoc & dokka
+dokkaHtml {
+    dokkaSourceSets {
+        commonMain {}
+        jvmMain {
+            sourceLink {
+                localDirectory.set(file("src/main/kotlin"))
+                remoteUrl.set(uri("https://github.com/wickie73/mockito4kotlin-annotation/tree/master/src/main/kotlin").toURL())
+                remoteLineSuffix.set("#L")
+            }
+        }
     }
-
-    jdkVersion = 8
 }
 
 task sourcesJar(type: Jar) {
@@ -68,10 +67,19 @@ task sourcesJar(type: Jar) {
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = "javadoc"
-    from dokka.outputDirectory
+    from dokkaHtml.outputDirectory
 }
 
-javadoc.dependsOn dokka
+javadoc.dependsOn dokkaHtml
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+// Signing
+signing {
+    sign configurations.archives
+}
 
 publishing {
     publications {
@@ -82,7 +90,7 @@ publishing {
             artifactId = libArtifactId
             version = libVersion
 
-			artifact sourcesJar
+            artifact sourcesJar
             artifact javadocJar
 
             versionMapping {
@@ -96,7 +104,7 @@ publishing {
             pom {
                 name = title
                 description = descriptionPOM
-                url = 'https://github.com/wickie73/mockito4kotlin.annotation'
+                url = projectURL
                 licenses {
                     license {
                         name = 'MIT'
@@ -112,30 +120,92 @@ publishing {
             }
         }
     }
+    // locale
+    repositories { maven { url = "file://${buildDir}/repo" } }
 }
 
-bintray {
-    user = project.hasProperty("user") ? project.property("user") : ''
-    key = project.hasProperty("key") ? project.property("key") : ''
-    publications = ['mavenJava']
-    publish = false
-    override = true
-    dryRun = false
+// Avoid generation of the module metadata so that we don't have to publish an additional file
+// and keep the build logic simple.
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
 
-    pkg {
-        repo = "wickieMaven"
-        name = project.name
-        desc = descriptionPOM
-        licenses = ["MIT"]
-        websiteUrl = "https://github.com/wickie73/mockito4kotlin.annotation"
-        issueTrackerUrl = "https://github.com/wickie73/mockito4kotlin.annotation/issues"
-        vcsUrl = "https://github.com/wickie73/mockito4kotlin.annotation.git"
-        publicDownloadNumbers = true
-        githubRepo = "wickie73/mockito4kotlin.annotation"
-        githubReleaseNotesFile = "README.md"
-        version {
-            name = libVersion
-            released = new Date()
+//fleshes out problems with Maven pom generation when building
+tasks.build.dependsOn('publishJavaLibraryPublicationToMavenLocal')
+
+// Deploying
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            if (project.hasProperty("ossrhUsername")) {
+                username = project.property("ossrhUsername")
+                password = project.property("ossrhPassword")
+            }
+        }
+    }
+
+}
+
+// Deploying
+apply plugin: 'maven'
+
+// Build, sign, and upload
+uploadArchives {
+    def ossrhUser = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : ''
+    def ossrhPwd = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : ''
+
+    repositories {
+        mavenDeployer {
+
+            // Sign POM
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            // locale
+            repositories { maven { url = "file://${buildDir}/repo" } }
+
+            // Destination
+            if (ossrhUser != '') {
+                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUser, password: ossrhPwd)
+                }
+                snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUser, password: ossrhPwd)
+                }
+            }
+
+            // Add required metadata to POM
+            pom.project {
+                name title
+                packaging 'jar'
+                description descriptionPOM
+                url projectURL
+
+                groupId libGroupId
+                artifactId libArtifactId
+                version libVersion
+
+                scm {
+                    connection 'scm:git:git://github.com/wickie73/mockito4kotlin-annotation.git'
+                    developerConnection 'scm:git:https://github.com/wickie73/mockito4kotlin-annotation.git'
+                    url 'https://github.com/wickie73/mockito4kotlin-annotation/tree/main'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = licenseURL
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'wickie73'
+                        name = 'Wilhelm Schulenburg'
+                    }
+                }
+            }
         }
     }
 }
