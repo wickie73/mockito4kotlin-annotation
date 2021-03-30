@@ -27,8 +27,8 @@
 
 package io.github.wickie73.mockito4kotlin.annotation.mockito
 
-import com.nhaarman.mockitokotlin2.firstValue
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.firstValue
+import org.mockito.kotlin.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeEach

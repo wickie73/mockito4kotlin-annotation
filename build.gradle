@@ -6,7 +6,7 @@ buildscript {
         kotlin_coroutines_version = '1.4.2'
         junit5_version = '5.7.0'
         mockito_version = '2.28.2'
-        mockito_kotlin_version = '2.2.0'
+        mockito_kotlin_version = '2.2.11'
         assertj_version = '3.18.1'
         dokka_version = '1.4.30'
         nexus_publish_version = '1.0.0'
@@ -38,7 +38,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     compile "org.mockito:mockito-core:$mockito_version"
-    compile "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
+    compile "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlin_coroutines_version"
     testCompile "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"

@@ -28,7 +28,7 @@
 
 package io.github.wickie73.mockito4kotlin.annotation
 
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.whenever
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*

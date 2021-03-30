@@ -8,14 +8,14 @@
 [ ![Download](https://maven-badges.herokuapp.com/maven-central/io.github.wickie73/mockito4kotlin-annotation/badge.svg) ](https://maven-badges.herokuapp.com/maven-central/io.github.wickie73/mockito4kotlin-annotation)
 
 This is a small Kotlin library which supports Annotations for Mockito 2.x or Kotlin libraries based on Mockito like
-[Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/).
+[mockito-kotlin](https://github.com/mockito/mockito-kotlin/tree/main/).
 
 In this library the initialization of fields annotated with Mockito annotations by code
 `MockitoAnnotations.initMocks(testClass)`
  is replaced by
 `KMockitoAnnotations.initMocks(testClass)`
 which is written in Kotlin and supports most of Kotlin specific features.
-It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.18.1/org/mockito/MockitoAnnotations.html).
+It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.23.0/org/mockito/MockitoAnnotations.html).
 
 ## Content
 * [Installing](#installing)

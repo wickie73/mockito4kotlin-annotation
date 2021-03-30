@@ -27,8 +27,8 @@
 
 package io.github.wickie73.mockito4kotlin.annotation.mockito
 
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.given
+import org.mockito.kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
