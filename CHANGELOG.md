@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.4.5] - 2021-03-22
+## [0.4.6] - 2021-03-31
+* Adjustment to package renaming of dependent mockito-kotlin library (#8)
+
+## [0.4.5] - 2021-03-30
 * Switch from Bintray/JCenter to maven central (#7)
 * renamed groupId from org.mockito4kotlin to io.github.wickie73
 * renamed artifactId from annotation to mockito4kotlin-annotation

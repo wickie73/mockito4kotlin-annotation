@@ -27,8 +27,8 @@
 
 package io.github.wickie73.mockito4kotlin.annotation
 
-import com.nhaarman.mockitokotlin2.KArgumentCaptor
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.KArgumentCaptor
+import org.mockito.kotlin.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

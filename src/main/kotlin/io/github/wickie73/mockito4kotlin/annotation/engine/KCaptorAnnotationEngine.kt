@@ -27,7 +27,7 @@
 
 package io.github.wickie73.mockito4kotlin.annotation.engine
 
-import com.nhaarman.mockitokotlin2.KArgumentCaptor
+import org.mockito.kotlin.KArgumentCaptor
 import org.mockito.ArgumentCaptor
 import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
 import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkIsKArgumentCaptor

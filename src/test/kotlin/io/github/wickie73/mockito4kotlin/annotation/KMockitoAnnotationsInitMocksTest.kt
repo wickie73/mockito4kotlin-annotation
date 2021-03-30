@@ -27,7 +27,7 @@
 
 package io.github.wickie73.mockito4kotlin.annotation
 
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.whenever
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch

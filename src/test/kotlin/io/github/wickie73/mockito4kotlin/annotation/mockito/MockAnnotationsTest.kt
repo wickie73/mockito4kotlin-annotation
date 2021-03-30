@@ -27,7 +27,7 @@
 
 package io.github.wickie73.mockito4kotlin.annotation.mockito
 
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.verify
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

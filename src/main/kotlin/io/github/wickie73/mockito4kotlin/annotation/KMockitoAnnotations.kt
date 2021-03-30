@@ -69,7 +69,7 @@ annotation class KMock(val extraInterfaces: Array<KClass<out Any>> = [],
                        val lenient: Boolean = false)
 
 /**
- * Allows shorthand [com.nhaarman.mockitokotlin2.KArgumentCaptor] creation on fields,
+ * Allows shorthand [org.mockito.kotlin.KArgumentCaptor] creation on fields,
  * properties or property's backing fields.
  *
  * * Makes code easier to read.
@@ -80,7 +80,7 @@ annotation class KMock(val extraInterfaces: Array<KClass<out Any>> = [],
  *
  * @see org.mockito.Captor
  * @see org.mockito.ArgumentCaptor
- * @see com.nhaarman.mockitokotlin2.KArgumentCaptor
+ * @see org.mockito.kotlin.KArgumentCaptor
  * @see org.mockito.Mock
  * @see org.mockito.Mockito.spy
  * @see org.mockito.InjectMocks

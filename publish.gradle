@@ -37,7 +37,7 @@ jar.manifest {
         "Specification-Version": version,
         "Specification-Vendor": "wickie73",
         "Export-Package": "io.github.wickie73.mockito4kotlin.annotation",
-        "Import-Package": 'com.nhaarman.mockitokotlin2;version="[2.0.0,3)"',
+        "Import-Package": 'org.mockito.kotlin;version="[2.2.7,3)"',
         "Require-Bundle": 'org.mockito;version="[2.24,3)",org.jetbrains.kotlin;version="[1.3.0,1.5)"',
         "Build-Jdk": java_version
     )
