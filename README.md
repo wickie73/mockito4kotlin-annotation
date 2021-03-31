@@ -2,20 +2,20 @@
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.4%2B-blue.svg?longCache=true)
 ![Mockito](https://img.shields.io/badge/Mockito-2.28%2B-blue.svg?longCache=true)
-[![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin.annotation/blob/master/LICENSE)
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin-annotation/blob/master/LICENSE)
 
-![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin.annotation.svg?longCache=true)
-[ ![Download](https://api.bintray.com/packages/wickie73/wickieMaven/org.mockito4kotlin.annotation/images/download.svg?version=0.4.2) ](https://bintray.com/wickie73/wickieMaven/org.mockito4kotlin.annotation/0.4.2/link)
+![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin-annotation.svg?longCache=true)
+[ ![Download](https://maven-badges.herokuapp.com/maven-central/io.github.wickie73/mockito4kotlin-annotation/badge.svg) ](https://maven-badges.herokuapp.com/maven-central/io.github.wickie73/mockito4kotlin-annotation)
 
 This is a small Kotlin library which supports Annotations for Mockito 2.x or Kotlin libraries based on Mockito like
-[Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) or [Mockito4k](https://github.com/tmurakami/mockito4k).
+[mockito-kotlin](https://github.com/mockito/mockito-kotlin/tree/main/).
 
 In this library the initialization of fields annotated with Mockito annotations by code
 `MockitoAnnotations.initMocks(testClass)`
  is replaced by
 `KMockitoAnnotations.initMocks(testClass)`
 which is written in Kotlin and supports most of Kotlin specific features.
-It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.18.1/org/mockito/MockitoAnnotations.html).
+It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.23.0/org/mockito/MockitoAnnotations.html).
 
 ## Content
 * [Installing](#installing)
@@ -29,25 +29,17 @@ Installing
 Mockito Annotations for Kotlin is available on jcenter.
 ### gradle
 ```gradle
-testCompile 'org.mockito4kotlin:annotation:0.4.x'
+testCompile 'io.github.wickie73:mockito4kotlin-annotation:0.4.x'
 ```
 ### maven
 ```xml
 <dependency>
-    <groupId>org.mockito4kotlin</groupId>
-    <artifactId>annotation</artifactId>
+    <groupId>io.github.wickie73</groupId>
+    <artifactId>mockito4kotlin-annotation</artifactId>
     <version>0.4.x</version>
     <scope>test</scope>
 </dependency>
 
-<repository>
-    <snapshots>
-        <enabled>false</enabled>
-    </snapshots>
-    <id>bintray-wickie73-maven</id>
-    <name>bintray</name>
-    <url>https://bintray.com/wickie73/wickieMaven</url>
-</repository>
 ```
 Examples
 --------
@@ -133,7 +125,7 @@ interface AddressDAO {
 }
 ```
 
-[Mockito-Kotlins](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) KArgumentCaptor with KCapture Annotation:
+[Mockito-Kotlin](https://github.com/mockito/mockito-kotlin/tree/main/) KArgumentCaptor with KCapture Annotation:
 
 ```kotlin
 @KCaptor
@@ -240,7 +232,7 @@ interface AddressDAO {
     fun save(address: Address?)  // 'Address?' has to be nullable here
 }
 ```
-With [Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about
+With [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin) KArgumentCaptor you don't have to be care about
 `nullable` parameters:
 ```kotlin
 @KCaptor

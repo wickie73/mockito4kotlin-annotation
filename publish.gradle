@@ -1,14 +1,11 @@
-apply plugin: "com.jfrog.bintray"
-apply plugin: "maven-publish"
-apply plugin: "org.jetbrains.dokka"
-
 ext {
-    libGroupId = 'org.mockito4kotlin'
-    libArtifactId = 'annotation'
+    libGroupId = 'io.github.wickie73'
+    libArtifactId = 'mockito4kotlin-annotation'
     libVersion = version
     title = 'Mockito Annotations for Kotlin'
-    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin or Mockito4k.'
+    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin.'
     licenseURL = 'https://opensource.org/licenses/MIT'
+    projectURL = 'https://github.com/wickie73/mockito4kotlin-annotation'
 }
 
 ext.sourceManifest = manifest {
@@ -39,62 +36,49 @@ jar.manifest {
         "Specification-Title": title,
         "Specification-Version": version,
         "Specification-Vendor": "wickie73",
-        "Export-Package": "org.mockito4kotlin.annotation",
-        "Import-Package": 'com.nhaarman.mockitokotlin2;version="[2.0.0,3)"',
-        "Require-Bundle": 'org.mockito;version="[2.13,4)",org.jetbrains.kotlin;version="[1.3.0,1.5)"',
+        "Export-Package": "io.github.wickie73.mockito4kotlin.annotation",
+        "Import-Package": 'org.mockito.kotlin;version="[2.2.7,3)"',
+        "Require-Bundle": 'org.mockito;version="[2.24,3)",org.jetbrains.kotlin;version="[1.3.0,1.5)"',
         "Build-Jdk": java_version
     )
 }
 
-dokkaHtml.configure {
+// javadoc & dokka
+dokkaHtml {
     dokkaSourceSets {
-        named("main") {
-            displayName.set("JVM")
-            jdkVersion.set(8)
+        commonMain {}
+        jvmMain {
             sourceLink {
-                remoteUrl.set(java.net.URL("https://github.com/wickie73/mockito4kotlin.annotation/tree/master/src/main/kotlin"))
+                localDirectory.set(file("src/main/kotlin"))
+                remoteUrl.set(uri("https://github.com/wickie73/mockito4kotlin-annotation/tree/master/src/main/kotlin").toURL())
                 remoteLineSuffix.set("#L")
-            }
-            perPackageOption {
-                matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
-                suppress.set(true)
             }
         }
     }
 }
 
 task sourcesJar(type: Jar) {
+    classifier = "sources"
     manifest = project.manifest {
         from sourceManifest
     }
     from sourceSets.main.allSource
 }
 
-
 task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
     from dokkaHtml.outputDirectory
 }
 
 javadoc.dependsOn dokkaHtml
 
-java {
-    withJavadocJar()
-    withSourcesJar()
+artifacts {
+    archives javadocJar, sourcesJar
 }
 
-def pomConfig = {
-    licenses {
-        license {
-            name = "MIT"
-            url = licenseURL
-        }
-    }
-    developers {
-        developer {
-            id = "wickie73"
-            name = "Wilhelm Schulenburg"
-        }
-    }
+// Signing
+signing {
+    sign configurations.archives
 }
 
 publishing {
@@ -102,46 +86,126 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
 
-            artifact sourcesJar
-
             groupId = libGroupId
             artifactId = libArtifactId
             version = libVersion
 
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', descriptionPOM)
-                root.appendNode('name', title)
-                root.appendNode('url', 'https://github.com/wickie73/mockito4kotlin.annotation')
-                root.children().last() + pomConfig
+            artifact sourcesJar
+            artifact javadocJar
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = title
+                description = descriptionPOM
+                url = projectURL
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = licenseURL
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'wickie73'
+                        name = 'Wilhelm Schulenburg'
+                    }
+                }
             }
         }
     }
+    // locale
+    repositories { maven { url = "file://${buildDir}/repo" } }
 }
 
-bintray {
-    user = project.hasProperty("user") ? project.property("user") : ''
-    key = project.hasProperty("key") ? project.property("key") : ''
+// Avoid generation of the module metadata so that we don't have to publish an additional file
+// and keep the build logic simple.
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
 
-    publish = false
-    override = true
-    dryRun = false
-    publications = ['mavenJava']
+//fleshes out problems with Maven pom generation when building
+tasks.build.dependsOn('publishJavaLibraryPublicationToMavenLocal')
 
-    pkg {
-        repo = "wickieMaven"
-        name = project.name
-        desc = descriptionPOM
-        licenses = ["MIT"]
-        websiteUrl = "https://github.com/wickie73/mockito4kotlin.annotation"
-        issueTrackerUrl = "https://github.com/wickie73/mockito4kotlin.annotation/issues"
-        vcsUrl = "https://github.com/wickie73/mockito4kotlin.annotation.git"
-        publicDownloadNumbers = true
-        githubRepo = "wickie73/mockito4kotlin.annotation"
-        githubReleaseNotesFile = "README.md"
-        version {
-            name = libVersion
-            released = new Date()
+// Deploying
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            if (project.hasProperty("ossrhUsername")) {
+                username = project.property("ossrhUsername")
+                password = project.property("ossrhPassword")
+            }
+        }
+    }
+
+}
+
+// Deploying
+apply plugin: 'maven'
+
+// Build, sign, and upload
+uploadArchives {
+    def ossrhUser = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : ''
+    def ossrhPwd = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : ''
+
+    repositories {
+        mavenDeployer {
+
+            // Sign POM
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            // locale
+            repositories { maven { url = "file://${buildDir}/repo" } }
+
+            // Destination
+            if (ossrhUser != '') {
+                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUser, password: ossrhPwd)
+                }
+                snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUser, password: ossrhPwd)
+                }
+            }
+
+            // Add required metadata to POM
+            pom.project {
+                name title
+                packaging 'jar'
+                description descriptionPOM
+                url projectURL
+
+                groupId libGroupId
+                artifactId libArtifactId
+                version libVersion
+
+                scm {
+                    connection 'scm:git:git://github.com/wickie73/mockito4kotlin-annotation.git'
+                    developerConnection 'scm:git:https://github.com/wickie73/mockito4kotlin-annotation.git'
+                    url 'https://github.com/wickie73/mockito4kotlin-annotation/tree/main'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = licenseURL
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'wickie73'
+                        name = 'Wilhelm Schulenburg'
+                    }
+                }
+            }
         }
     }
 }
