@@ -125,7 +125,7 @@ interface AddressDAO {
 }
 ```
 
-[Mockito-Kotlins](https://github.com/nhaarman/mockito-kotlin/tree/2.x/) KArgumentCaptor with KCapture Annotation:
+[Mockito-Kotlin](https://github.com/mockito/mockito-kotlin/tree/main/) KArgumentCaptor with KCapture Annotation:
 
 ```kotlin
 @KCaptor
@@ -232,7 +232,7 @@ interface AddressDAO {
     fun save(address: Address?)  // 'Address?' has to be nullable here
 }
 ```
-With [Mockito-Kotlin2](https://github.com/nhaarman/mockito-kotlin) KArgumentCaptor you don't have to be care about
+With [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin) KArgumentCaptor you don't have to be care about
 `nullable` parameters:
 ```kotlin
 @KCaptor
