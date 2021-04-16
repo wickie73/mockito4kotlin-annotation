@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.5.0 - 2021-04-xx
+## [0.5.0 - 2021-04-17
 * Adopt breaking changes in Mockito 3.4.0 and higher (#4)
 * Introduced `KMockitoAnnotations.openMocks( Any )`
 * Deprecated `KMockitoAnnotations.initocks( Any )`
