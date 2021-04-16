@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -32,7 +32,7 @@ import kotlin.reflect.KProperty
 
 internal interface AnnotationEngine {
 
-    fun inject(mockedAssignedProperties: MockPropertyCollector): AnnotationEngine
+    fun initWith(mockedAssignedProperties: MockPropertyCollector): AnnotationEngine
 
     fun process(anyInstanceWithMocks: Any, property: KProperty<*>)
 }

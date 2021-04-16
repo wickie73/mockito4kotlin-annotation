@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -34,7 +34,7 @@ internal abstract class AbstractAnnotationEngine : AnnotationEngine {
 
     protected lateinit var mockedAssignedProperties: MockPropertyCollector
 
-    override fun inject(mockedAssignedProperties: MockPropertyCollector): AnnotationEngine {
+    override fun initWith(mockedAssignedProperties: MockPropertyCollector): AnnotationEngine {
         this.mockedAssignedProperties = mockedAssignedProperties
         return this
     }

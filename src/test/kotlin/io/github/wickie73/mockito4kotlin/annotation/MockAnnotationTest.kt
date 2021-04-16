@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -31,6 +31,7 @@ package io.github.wickie73.mockito4kotlin.annotation
 import org.mockito.kotlin.whenever
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -41,12 +42,21 @@ import org.mockito.exceptions.misusing.MissingMethodInvocationException
 
 class MockAnnotationTest {
 
+    private lateinit var testCloseable: AutoCloseable
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
+    }
+
     @Test
     @DisplayName("should mock mutable property")
     fun testMutableMock() {
         val testee = ClassWithMutableProperties()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitList[0]).thenReturn("test")
 
         assertThatIsAMock(testee.lateinitList)
@@ -58,7 +68,7 @@ class MockAnnotationTest {
     fun testMutableKMock() {
         val testee = ClassWithMutableProperties()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitListK[0]).thenReturn("test")
 
         assertThatIsAMock(testee.lateinitListK)
@@ -70,7 +80,7 @@ class MockAnnotationTest {
     fun testMutableSpy() {
         val testee = ClassWithMutableProperties()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitSet.size).thenReturn(5)
 
         assertThatIsAMock(testee.lateinitSet)
@@ -83,7 +93,7 @@ class MockAnnotationTest {
     fun testMutableInitializedSpy() {
         val testee = ClassWithMutableProperties()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.initializedSet.size).thenReturn(5)
 
         assertThatIsAMock(testee.initializedSet)
@@ -96,7 +106,7 @@ class MockAnnotationTest {
     fun testMutableCaptor() {
         val testee = ClassWithMutableProperties()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
 
         assertEquals(0, testee.lateinitCaptor.allValues.size)
     }
@@ -107,7 +117,7 @@ class MockAnnotationTest {
         val testee = ClassWithImmutableMockProperty()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock field named 'immutableList', cause it is immutable!")
@@ -120,7 +130,7 @@ class MockAnnotationTest {
         val testee = ClassWithImmutableKMockProperty()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock field named 'immutableListK', cause it is immutable!")
@@ -133,7 +143,7 @@ class MockAnnotationTest {
         val testee = ClassWithImmutableSpyProperty()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock field named 'immutableMap', cause it is immutable!")
@@ -146,7 +156,7 @@ class MockAnnotationTest {
         val testee = ClassWithImmutableCaptorProperty()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock field named 'captor', cause it is immutable!")
@@ -159,7 +169,7 @@ class MockAnnotationTest {
         val testee = ClassWithMockPropertyOfFinalClass()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class java.lang.String")
@@ -172,7 +182,7 @@ class MockAnnotationTest {
         val testee = ClassWithKMockPropertyOfFinalClass()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class java.lang.String")
@@ -185,7 +195,7 @@ class MockAnnotationTest {
         val testee = ClassWithSpyPropertyOfFinalClass()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class java.lang.String")
@@ -197,7 +207,7 @@ class MockAnnotationTest {
     fun testMockOfDataClassWithList() {
         val testee = DataSubClassOfSealedClass(34)
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitList[0]).thenReturn("test")
 
         assertThatIsAMock(testee.lateinitList)
@@ -209,7 +219,7 @@ class MockAnnotationTest {
     fun testMockOfDataClassWithListWithKMock() {
         val testee = DataSubClassOfSealedClassWithKMock(34)
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitListK[0]).thenReturn("test")
 
         assertThatIsAMock(testee.lateinitListK)
@@ -221,7 +231,7 @@ class MockAnnotationTest {
     fun testMockOfDataClassWithMap() {
         val testee = DataSubClassOfSealedClass(34)
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitMap["key"]).thenReturn("test")
 
         assertThatIsAMock(testee.lateinitMap)
@@ -233,7 +243,7 @@ class MockAnnotationTest {
     fun testMockOfDataClassWithMapWithKMock() {
         val testee = DataSubClassOfSealedClassWithKMock(34)
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitMapK["key"]).thenReturn("test")
 
         assertThatIsAMock(testee.lateinitMapK)
@@ -245,7 +255,7 @@ class MockAnnotationTest {
     fun testMockOfDataClassWithSet() {
         val testee = DataSubClassOfSealedClass(34)
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitSet.contains("test")).thenReturn(true)
 
         assertThatIsAMock(testee.lateinitSet)
@@ -258,7 +268,7 @@ class MockAnnotationTest {
     fun testMockOfSealedClass() {
         val testee = ClassWithMockOfSealedClasses()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.sealedPropertyToMock.toString()).thenReturn("test")
 
         assertThatIsAMock(testee.sealedPropertyToMock)
@@ -270,7 +280,7 @@ class MockAnnotationTest {
     fun testKMockOfSealedClass() {
         val testee = ClassWithKMockOfSealedClasses()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.sealedPropertyToKMock.toString()).thenReturn("test")
 
         assertThatIsAMock(testee.sealedPropertyToKMock)
@@ -283,7 +293,7 @@ class MockAnnotationTest {
         val testee = ClassWithSpyOfSealedClasses()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Unable to initialize @Spy annotated field named 'sealedPropertyToSpy' of type 'io.github.wickie73.mockito4kotlin.annotation.SealedClass'.")
@@ -296,7 +306,7 @@ class MockAnnotationTest {
         val testee = ClassWithSpyOfInitializedSealedClasses()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Unable to initialize @Spy annotated field named 'sealedPropertyToSpy' of type 'io.github.wickie73.mockito4kotlin.annotation.SealedClass'.")
@@ -309,7 +319,7 @@ class MockAnnotationTest {
         val testee = ClassWithSpyOfInitializedSealedClassesWithKMock()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Unable to initialize @Spy annotated field named 'sealedPropertyToSpy' of type 'io.github.wickie73.mockito4kotlin.annotation.SealedClass'.")
@@ -321,7 +331,7 @@ class MockAnnotationTest {
     fun testMockOfClassWithExtensionProperty() {
         val testee = ClassWithMockExtensionProperty()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToMock.toString()).thenReturn("test")
 
         assertThatIsAMock(testee.propertyToMock)
@@ -334,7 +344,7 @@ class MockAnnotationTest {
     fun testKMockOfClassWithExtensionProperty() {
         val testee = ClassWithMockExtensionProperty()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToKMock.toString()).thenReturn("test")
 
         assertThatIsAMock(testee.propertyToKMock)
@@ -347,7 +357,7 @@ class MockAnnotationTest {
     fun testMockOfPropertyOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectAndMockProperty
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToMock[0]).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToMock)
@@ -359,7 +369,7 @@ class MockAnnotationTest {
     fun testKMockOfPropertyOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectAndMockProperty
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToKMock[0]).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToKMock)
@@ -371,7 +381,7 @@ class MockAnnotationTest {
     fun testMockOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectMockProperty()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToMock.toString()).thenReturn("test")
 
         assertThatIsAMock(testee.propertyToMock)
@@ -383,7 +393,7 @@ class MockAnnotationTest {
     fun testKMockOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectMockProperty()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToKMock.toString()).thenReturn("test")
 
         assertThatIsAMock(testee.propertyToKMock)
@@ -395,7 +405,7 @@ class MockAnnotationTest {
     fun testSpyOfPropertyOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectAndSpyProperty
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToSpy[0]).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToSpy)
@@ -408,7 +418,7 @@ class MockAnnotationTest {
     fun testSpyOfClassCompanionObject() {
         val testee = ClassWithCompanionObjectSpyProperty()
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToSpy.toString()).thenReturn("test")
 
         assertThatIsAMock(testee.propertyToSpy)
@@ -421,7 +431,7 @@ class MockAnnotationTest {
     fun testMockOfObject() {
         val testee = ObjectWithMockProperty
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToMock[0]).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToKMock)
@@ -433,7 +443,7 @@ class MockAnnotationTest {
     fun testKMockOfObject() {
         val testee = ObjectWithMockProperty
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToKMock[0]).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToKMock)
@@ -445,7 +455,7 @@ class MockAnnotationTest {
     fun testSpyOfObject() {
         val testee = ObjectWithSpyProperty
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToSpy[0]).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToSpy)
@@ -459,7 +469,7 @@ class MockAnnotationTest {
         val testee = ClassWithMockObjectProperties()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class io.github.wickie73.mockito4kotlin.annotation.ObjectForTests")
@@ -472,7 +482,7 @@ class MockAnnotationTest {
         val testee = ClassWithKMockObjectProperties()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class io.github.wickie73.mockito4kotlin.annotation.ObjectForTests")
@@ -485,7 +495,7 @@ class MockAnnotationTest {
         val testee = ClassWithSpyObjectProperties()
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(testee)
+            testCloseable = KMockitoAnnotations.openMocks(testee)
         }
 
         assertThat(result).hasMessageContaining("Cannot mock/spy class io.github.wickie73.mockito4kotlin.annotation.ObjectForTests")
@@ -497,7 +507,7 @@ class MockAnnotationTest {
     fun testMockOfDataClassProperty() {
         val testee = DataClassWithMockPropertyInConstructor("mockito for kotlin")
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         val result = assertThrows(MockitoException::class.java) {
             whenever(testee.propertyToMock[0]).thenReturn('k')
         }
@@ -511,7 +521,7 @@ class MockAnnotationTest {
     fun testKMockOfDataClassProperty() {
         val testee = DataClassWithKMockPropertyInConstructor("mockito for kotlin")
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToKMock[0]).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToKMock)
@@ -523,7 +533,7 @@ class MockAnnotationTest {
     fun testSpyOfDataClassProperty() {
         val testee = DataClassWithSpyPropertyInConstructor(null)
 
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.propertyToSpy?.get(0)).thenReturn('k')
 
         assertThatIsAMock(testee.propertyToSpy)
@@ -535,7 +545,7 @@ class MockAnnotationTest {
     @DisplayName("should mock property of class with suspend method")
     fun testMockOfClassWithSuspendMethod() {
         val testee = ClassWithMockOfClassWithSuspendMethod()
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
 
         runBlocking {
             testee.property.suspendCall()
@@ -550,7 +560,7 @@ class MockAnnotationTest {
     @DisplayName("should mock property of class with suspend method with global RunBlocking")
     fun testMockOfClassWithSuspendMethodWithGlobalRunBlocking() = runBlocking {
         val testee = ClassWithMockOfClassWithSuspendMethod()
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
 
         testee.property.suspendCall()
 
@@ -562,7 +572,7 @@ class MockAnnotationTest {
     @DisplayName("should kmock property of class with suspend method")
     fun testKMockOfClassWithSuspendMethod() {
         val testee = ClassWithKMockOfClassWithSuspendMethod()
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
 
         runBlocking {
             testee.property.suspendCall()
@@ -577,7 +587,7 @@ class MockAnnotationTest {
     @DisplayName("should kmock property of class with suspend method with global RunBlocking")
     fun testKMockOfClassWithSuspendMethodWithGlobalRunBlocking() = runBlocking {
         val testee = ClassWithKMockOfClassWithSuspendMethod()
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
 
         testee.property.suspendCall()
 

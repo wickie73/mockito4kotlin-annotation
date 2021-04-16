@@ -28,25 +28,48 @@
 package io.github.wickie73.mockito4kotlin.annotation.engine
 
 import io.github.wickie73.mockito4kotlin.annotation.KMock
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkDelegateProperty
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalCompanionObjects
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalInnerClass
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyDelegateProperty
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyImmutableProperties
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyNumberOfMockAnnotations
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyPrivateOrInternalCompanionObjects
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyPrivateOrInternalInnerClass
+import org.mockito.MockSettings
+import org.mockito.Mockito
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
 
 internal class KMockAnnotationEngine : AbstractAnnotationEngine() {
 
     override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
-        checkImmutableProperties(property)
-        checkNumberOfMockAnnotations(property)
-        checkPrivateOrInternalInnerClass(KMock::class, property, anyInstanceWithMocks)
-        checkPrivateOrInternalCompanionObjects(KMock::class, property)
-        checkDelegateProperty(KMock::class, property )
+        verifyImmutableProperties(property)
+        verifyNumberOfMockAnnotations(property)
+        verifyPrivateOrInternalInnerClass(KMock::class, property, anyInstanceWithMocks)
+        verifyPrivateOrInternalCompanionObjects(KMock::class, property)
+        verifyDelegateProperty(KMock::class, property)
 
-        assignObjectToProperty(property as KMutableProperty<*>, anyInstanceWithMocks, MockAnnotationProcessor.createMock(property))
+        assignObjectToProperty(property as KMutableProperty<*>, anyInstanceWithMocks, createMock(property))
     }
+
+    private fun createMock(property: KMutableProperty<*>): Any = Mockito.mock(property.javaField?.type, toMockSettings(property))
+
+    private fun toMockSettings(property: KProperty<*>): MockSettings {
+        val mockSettings: MockSettings = Mockito.withSettings()
+        with(toKMockAnnotation(property)) {
+            when {
+                extraInterfaces.isNotEmpty() -> mockSettings.extraInterfaces(*extraInterfaces.map { it.java }.toTypedArray())
+            }
+            if (stubOnly) mockSettings.stubOnly()
+            if (name.isNotEmpty()) mockSettings.name(name) else mockSettings.name(property.name)
+            if (serializable) mockSettings.serializable()
+            if (lenient) mockSettings.lenient()
+            mockSettings.defaultAnswer(answer)
+        }
+        return mockSettings
+    }
+
+    private fun toKMockAnnotation(property: KProperty<*>): KMock = property.annotations.find { it is KMock } as KMock
 }
+

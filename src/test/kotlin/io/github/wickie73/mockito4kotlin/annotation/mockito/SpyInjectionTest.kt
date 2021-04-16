@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -36,6 +36,7 @@ import org.mockito.InjectMocks
 import org.mockito.Spy
 import org.mockito.internal.util.MockUtil.isSpy
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 import kotlin.reflect.full.createInstance
 
 /**
@@ -47,6 +48,8 @@ import kotlin.reflect.full.createInstance
  * * @[org.mockito.InjectMocks]
  */
 class SpyInjectionTest {
+
+    private lateinit var testCloseable: AutoCloseable
 
     @Spy
     internal var spy: List<Any> = mutableListOf()
@@ -64,12 +67,19 @@ class SpyInjectionTest {
 
     @BeforeEach
     fun setUp() {
-        try {
-            hasSpy = HasSpy::class.createInstance()
+        hasSpy = try {
+            HasSpy::class.createInstance()
         } catch (e: IllegalArgumentException) {
-            hasSpy = HasSpy()
+            HasSpy()
         }
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @Test

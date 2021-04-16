@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Spy
 import org.mockito.internal.util.MockUtil.isSpy
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.SpyAnnotationInitializedInBaseClassTest] and
@@ -45,7 +46,7 @@ import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
  */
 open class SpyAnnotationInitializedInBaseClassTest {
 
-    internal inner open class BaseClass {
+    internal open inner class BaseClass {
 
         @Spy
         var list = mutableListOf<Any>()
@@ -53,6 +54,14 @@ open class SpyAnnotationInitializedInBaseClassTest {
 
     internal inner class SubClass : BaseClass()
 
+    private lateinit var testCloseable: AutoCloseable
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
+    }
 
     @Test
     @DisplayName("Spy in BaseClass should be initialized")
@@ -60,7 +69,7 @@ open class SpyAnnotationInitializedInBaseClassTest {
         //given
         val subClass = SubClass()
         //when
-        KMockitoAnnotations.initMocks(subClass)
+        testCloseable = KMockitoAnnotations.openMocks(subClass)
         //then
         assertTrue(isSpy(subClass.list))
     }
@@ -70,14 +79,14 @@ open class SpyAnnotationInitializedInBaseClassTest {
     fun shouldInitSpiesInHierarchyInNestedClass() {
         val subTest = SubTest()
 
-        KMockitoAnnotations.initMocks(subTest)
+        testCloseable = KMockitoAnnotations.openMocks(subTest)
 
         subTest.shouldInitSpiesInHierarchy()
     }
 
     @BeforeEach
     internal fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
     }
 
     @Spy

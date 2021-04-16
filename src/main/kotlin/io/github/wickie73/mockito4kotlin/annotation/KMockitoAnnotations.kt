@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -27,12 +27,9 @@
 
 package io.github.wickie73.mockito4kotlin.annotation
 
+import io.github.wickie73.mockito4kotlin.annotation.engine.AnnotationEngineManager
 import org.mockito.*
-import io.github.wickie73.mockito4kotlin.annotation.engine.AnnotationEngineFactory
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 /**
  * Mark a field, property or property's backing field as a mock.
@@ -49,7 +46,7 @@ import kotlin.reflect.jvm.isAccessible
  * @see org.mockito.MockSettings
  * @see org.mockito.Spy
  * @see org.mockito.InjectMocks
- * @see org.mockito.MockitoAnnotations.initMocks
+ * @see org.mockito.MockitoAnnotations.openMocks
  *
  * @property extraInterfaces Extra interfaces the mock should implement.
  * @property stubOnly Does not record method invocation -> disallowing verification of invocations
@@ -84,7 +81,7 @@ annotation class KMock(val extraInterfaces: Array<KClass<out Any>> = [],
  * @see org.mockito.Mock
  * @see org.mockito.Mockito.spy
  * @see org.mockito.InjectMocks
- * @see org.mockito.MockitoAnnotations.initMocks
+ * @see org.mockito.MockitoAnnotations.openMocks
  *
  */
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
@@ -93,7 +90,7 @@ annotation class KCaptor
 
 
 /**
- * KMockitoAnnotations.initMocks(this) initializes fields, property or property's backing field
+ * KMockitoAnnotations.openMocks(this) initializes fields, property or property's backing field
  * of the given instance annotated with mock annotations like [Mock], [KMock], [Spy], [Captor], [KCaptor] and [InjectMocks].
  *
  * * Makes code easier to read.
@@ -102,7 +99,7 @@ annotation class KCaptor
  *
  * See examples in [org.mockito.MockitoAnnotations]
  *
- * @see org.mockito.MockitoAnnotations.initMocks
+ * @see org.mockito.MockitoAnnotations.openMocks
  * @see org.mockito.Mockito.mock
  * @see org.mockito.Mock
  * @see org.mockito.Spy
@@ -110,60 +107,33 @@ annotation class KCaptor
  * @see org.mockito.InjectMocks
  */
 object KMockitoAnnotations {
-    private val mockedAssignedProperties = MockPropertyCollector()
 
     /**
      * Initializes objects annotated with [Mock], [KMock], [Spy], [Captor], [KCaptor] and [InjectMocks].
      *
      * @param anyInstanceWithMocks instance with MockAnnotations to be initialized.
+     * @return [AutoCloseable] which has to close after tests has been completed.
+     * @see [MockitoAnnotations.openMocks]
      */
+    fun openMocks(anyInstanceWithMocks: Any): AutoCloseable {
+        val annotationEngineManager = AnnotationEngineManager(anyInstanceWithMocks)
+        return annotationEngineManager.process()
+    }
+
+    /**
+     * Initializes objects annotated with [Mock], [KMock], [Spy], [Captor], [KCaptor] and [InjectMocks].
+     *
+     * @param anyInstanceWithMocks instance with MockAnnotations to be initialized.
+     *
+     * This method is equivalent to `openMocks(testClass).close()`.
+     * However the [AutoCloseable.close] method should only used after usage of parameter [anyInstanceWithMocks].
+     * @see [MockitoAnnotations.initMocks]
+     * @see [MockitoAnnotations.openMocks]
+     * @since 0.5.0
+     */
+    @Deprecated("Since MockitoAnnotations.initMocks(Any) in version 3.4.0 is deprecated.", replaceWith = ReplaceWith("KMockitoAnnotations.openMocks(anyInstanceWithMocks)"))
     fun initMocks(anyInstanceWithMocks: Any) {
-        mockedAssignedProperties.reset()
-        val properties = anyInstanceWithMocks::class.memberProperties
-
-        processAnnotations(anyInstanceWithMocks, properties, ::isMockito4KotlinAnnotation)
-        registerInlinedMockDeclaration(anyInstanceWithMocks, properties)
-        processAnnotations(anyInstanceWithMocks, properties) { it is InjectMocks }
+        openMocks(anyInstanceWithMocks).close();
     }
-
-    private fun processAnnotations(anyInstanceWithMocks: Any, properties: Collection<KProperty<*>>, predicate: Predicate<Annotation>) {
-        properties.filter { it.allAnnotations().any(predicate) }
-            .forEach { property ->
-                AnnotationEngineFactory.create(asAnnotation(property, predicate)).apply {
-                    inject(mockedAssignedProperties)
-                    process(anyInstanceWithMocks, property)
-                }
-            }
-    }
-
-    private fun registerInlinedMockDeclaration(anyInstanceWithMocks: Any, properties: Collection<KProperty<*>>) {
-
-        fun isValueMocked(value: Any): Boolean {
-            val mockingDetails = Mockito.mockingDetails(value)
-            return mockingDetails.isMock || mockingDetails.isSpy
-        }
-
-        properties.forEach { property ->
-            property.isAccessible = true
-            property.getter.call(anyInstanceWithMocks)?.let { value ->
-                if (isValueMocked(value)) {
-                    mockedAssignedProperties.register(property, value)
-                }
-            }
-        }
-    }
-
-    private fun asAnnotation(property: KProperty<*>, predicate: Predicate<Annotation>) =
-        property.allAnnotations().find(predicate)
-
 }
 
-/**
- * Returns true if the given annotation is a Mockito4Kotlin annotation like:
- * [Mock], [KMock], [Spy], [Captor] and [KCaptor].
- *
- * @param it given annotation
- */
-internal fun isMockito4KotlinAnnotation(it: Annotation) = it is Mock || it is Spy || it is Captor || it is KCaptor || it is KMock
-
-internal typealias Predicate<T> = (T) -> Boolean

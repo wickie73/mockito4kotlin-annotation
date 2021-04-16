@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -38,8 +38,8 @@ internal object AnnotationEngineFactory {
 
     internal fun create(annotation: Annotation?): AnnotationEngine {
         return when (annotation) {
-            is Mock -> MockAnnotationEngine(Mock::class)
-            is KMock -> MockAnnotationEngine(KMock::class)
+            is Mock -> MockAnnotationEngine()
+            is KMock -> KMockAnnotationEngine()
             is Spy -> SpyAnnotationEngine()
             is Captor -> CaptorAnnotationEngine()
             is KCaptor -> KCaptorAnnotationEngine()

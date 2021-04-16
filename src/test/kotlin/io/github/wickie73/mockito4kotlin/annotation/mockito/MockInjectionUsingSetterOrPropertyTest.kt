@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -38,6 +38,7 @@ import org.mockito.Mockito
 import org.mockito.Spy
 import org.mockito.exceptions.base.MockitoException
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 import java.util.*
 
 /**
@@ -49,6 +50,8 @@ import java.util.*
  * * @[org.mockito.InjectMocks]
  */
 class MockInjectionUsingSetterOrPropertyTest {
+
+    private lateinit var testCloseable: AutoCloseable
 
     private val superUnderTestWithoutInjection = SuperUnderTesting()
 
@@ -88,11 +91,18 @@ class MockInjectionUsingSetterOrPropertyTest {
     private var candidate2: Methods4MockTests? = null
 
     @Spy
-    private var searchTree: NavigableSet<String> = TreeSet<String>()
+    private var searchTree: NavigableSet<String> = TreeSet()
 
     @BeforeEach
     fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @Test
@@ -126,46 +136,64 @@ class MockInjectionUsingSetterOrPropertyTest {
     @Test
     @DisplayName("should inject mocks if annotated")
     fun testInjectMocksWithAnnotation() {
-        KMockitoAnnotations.initMocks(this)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(this)
+
         assertSame(list, superUnderTest.aList)
+
+        innerTestCloseable.close()
     }
 
     @Test
     @DisplayName("should not inject if not annotated")
     fun testInjectMocksWithoutAnnotation() {
-        KMockitoAnnotations.initMocks(this)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(this)
+
         assertNull(superUnderTestWithoutInjection.aList)
+
+        innerTestCloseable.close()
     }
 
     @Test
     @DisplayName("should inject mocks for class hierarchy if annotated")
     fun testInjectMocksWithinClassHierarchy() {
-        KMockitoAnnotations.initMocks(this)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(this)
+
         assertSame(list, baseUnderTest.aList)
         assertSame(map, baseUnderTest.aMap)
+
+        innerTestCloseable.close()
     }
 
     @Test
     @DisplayName("should inject mocks by name")
     fun testInjectMocksByName() {
-        KMockitoAnnotations.initMocks(this)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(this)
+
         assertSame(histogram1, subUnderTest.histogram1)
         assertSame(histogram2, subUnderTest.histogram2)
+
+        innerTestCloseable.close()
     }
 
     @Test
     @DisplayName("should inject spies")
     fun testInjectMocksWithSpy() {
-        KMockitoAnnotations.initMocks(this)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(this)
+
         assertSame(searchTree, otherBaseUnderTest.searchTree)
+
+        innerTestCloseable.close()
     }
 
     @Test
     @DisplayName("should insert into field with matching name when multiple fields of same type exists in injectee")
     fun testInjectMocksWithFieldsOfSameType() {
-        KMockitoAnnotations.initMocks(this)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(this)
+
         assertNull(hasTwoFieldsWithSameType.candidate1, "not injected, no mock named 'candidate1'")
         assertNotNull(hasTwoFieldsWithSameType.candidate2, "injected, there's a mock named 'candidate2'")
+
+        innerTestCloseable.close()
     }
 
     @Test
@@ -183,7 +211,7 @@ class MockInjectionUsingSetterOrPropertyTest {
         }
 
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(failing)
+            KMockitoAnnotations.openMocks(failing)
         }
 
         assertThat(result.message).contains("failingConstructor").contains("constructor").contains("threw an exception")

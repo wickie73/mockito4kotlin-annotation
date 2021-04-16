@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -37,6 +37,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.InjectionOfInlinedMockDeclarationTest] and
@@ -47,6 +48,8 @@ import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
  * * @[org.mockito.InjectMocks]
  */
 class InjectionOfInlinedMockDeclarationTest {
+
+    private lateinit var testCloseable: AutoCloseable
 
     @InjectMocks
     private lateinit var receiver: Receiver
@@ -62,7 +65,14 @@ class InjectionOfInlinedMockDeclarationTest {
 
     @BeforeEach
     fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @Test

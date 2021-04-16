@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -29,9 +29,9 @@ package io.github.wickie73.mockito4kotlin.annotation.engine
 
 import org.mockito.kotlin.KArgumentCaptor
 import org.mockito.ArgumentCaptor
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkIsKArgumentCaptor
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyImmutableProperties
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyIsKArgumentCaptor
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyNumberOfMockAnnotations
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -42,13 +42,11 @@ internal class KCaptorAnnotationEngine : AbstractAnnotationEngine() {
 
     override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
-        checkImmutableProperties(property)
-        checkNumberOfMockAnnotations(property)
-        checkIsKArgumentCaptor(property)
+        verifyImmutableProperties(property)
+        verifyNumberOfMockAnnotations(property)
+        verifyIsKArgumentCaptor(property)
 
-        with(property as KMutableProperty<*>) {
-            property.setter.call(anyInstanceWithMocks, createArgumentCaptor(property))
-        }
+        (property as KMutableProperty<*>).setter.call(anyInstanceWithMocks, createArgumentCaptor(property))
     }
 
     private fun createArgumentCaptor(property: KProperty<*>): Any {

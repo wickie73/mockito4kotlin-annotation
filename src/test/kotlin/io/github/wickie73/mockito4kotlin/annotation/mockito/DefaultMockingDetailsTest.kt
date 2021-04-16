@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -40,6 +40,7 @@ import org.mockito.Mockito.mockingDetails
 import org.mockito.Spy
 import org.mockito.exceptions.misusing.NotAMockException
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.DefaultMockingDetailsTest] and
@@ -50,6 +51,8 @@ import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
  * * @[org.mockito.InjectMocks]
  */
 class DefaultMockingDetailsTest {
+
+    private lateinit var testCloseable: AutoCloseable
 
     @Mock
     private lateinit var foo: Foo
@@ -62,7 +65,14 @@ class DefaultMockingDetailsTest {
 
     @BeforeEach
     fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @Test
@@ -139,9 +149,9 @@ class DefaultMockingDetailsTest {
     @Test
     @DisplayName("fails when getting creation settings for incorrect input")
     fun testMockWithNullWithMockCreationSettings() {
-        val result = assertThrows(NotAMockException::class.java, {
+        val result = assertThrows(NotAMockException::class.java) {
             mockingDetails(null).mockCreationSettings
-        })
+        }
 
         assertNotNull(result.message)
     }
@@ -150,9 +160,9 @@ class DefaultMockingDetailsTest {
     @DisplayName("fails when getting invocations when null")
     fun testMockWithNullWithInvocations() {
         //when
-        val result = assertThrows(NotAMockException::class.java, {
+        val result = assertThrows(NotAMockException::class.java) {
             mockingDetails(null).invocations
-        })
+        }
 
         //then
         assertEquals("Argument passed to Mockito.mockingDetails() should be a mock, but is null!", result.message)
@@ -162,9 +172,9 @@ class DefaultMockingDetailsTest {
     @DisplayName("fails when getting invocations when not mock")
     fun testMockWithAnyWithInvocations() {
         //when
-        val result = assertThrows(NotAMockException::class.java, {
+        val result = assertThrows(NotAMockException::class.java) {
             mockingDetails(Any()).invocations
-        })
+        }
 
         //then
         assertEquals("Argument passed to Mockito.mockingDetails() should be a mock, but is an instance of class java.lang.Object!", result.message)
@@ -175,9 +185,9 @@ class DefaultMockingDetailsTest {
     @DisplayName("fails when getting stubbings from non mock")
     fun testMockWithAnyWithStubbing() {
         //when
-        val result = assertThrows(NotAMockException::class.java, {
+        val result = assertThrows(NotAMockException::class.java) {
             mockingDetails(Any()).getStubbings()
-        })
+        }
 
         //then
         assertEquals("Argument passed to Mockito.mockingDetails() should be a mock, but is an instance of class java.lang.Object!", result.message)
@@ -223,7 +233,7 @@ class DefaultMockingDetailsTest {
         mock.simpleMethod("arg")
 
         //when
-        val log = Mockito.mockingDetails(mock).printInvocations()
+        val log = mockingDetails(mock).printInvocations()
 
         //then
         assertThat(log).containsIgnoringCase("unused")
@@ -235,9 +245,9 @@ class DefaultMockingDetailsTest {
     @DisplayName("fails when printin invocations from non mock")
     fun testPrintingInvocationsOfNonMock() {
         //when
-        val result = assertThrows(NotAMockException::class.java, {
+        val result = assertThrows(NotAMockException::class.java) {
             mockingDetails(Any()).printInvocations()
-        })
+        }
 
         //then
         assertEquals("Argument passed to Mockito.mockingDetails() should be a mock, but is an instance of class java.lang.Object!", result.message)
