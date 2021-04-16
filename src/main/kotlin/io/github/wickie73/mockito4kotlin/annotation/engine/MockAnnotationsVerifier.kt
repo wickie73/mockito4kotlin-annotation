@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -38,7 +38,7 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.*
 import kotlin.reflect.jvm.javaField
 
-internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
+internal object MockAnnotationsVerifier {
 
     private val injectMocksExample = """
                              |Examples of correct usage of @InjectMocks:
@@ -61,7 +61,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
                                            |You haven't provided the instance at field declaration so an instance have to be constructed.
                                            """.trimMargin()
 
-    internal fun checkImmutableProperties(property: KProperty<*>) {
+    internal fun verifyImmutableProperties(property: KProperty<*>) {
         inCaseOf {
             property !is KMutableProperty
         } throwMockitoException {
@@ -72,7 +72,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
         }
     }
 
-    internal fun checkNumberOfMockAnnotations(property: KProperty<*>) {
+    internal fun verifyNumberOfMockAnnotations(property: KProperty<*>) {
 
         fun isMockito4KotlinAnnotationOr(orPredicate: Predicate<Annotation>): Predicate<Annotation> =
             { isMockito4KotlinAnnotation(it) || orPredicate(it) }
@@ -94,7 +94,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
     }
 
 
-    internal fun checkPrivateOrInternalInnerClass(annotationClass: KClass<out Any>, property: KProperty<*>, anyWithMocks: Any) {
+    internal fun verifyPrivateOrInternalInnerClass(annotationClass: KClass<out Any>, property: KProperty<*>, anyWithMocks: Any) {
         inCaseOf {
             property.kClass?.isInner == true &&
                 (property.kClass?.visibility == KVisibility.PRIVATE ||
@@ -112,7 +112,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
         }
     }
 
-    internal fun checkPrivateOrInternalCompanionObjects(annotationClass: KClass<out Any>, property: KProperty<*>) {
+    internal fun verifyPrivateOrInternalCompanionObjects(annotationClass: KClass<out Any>, property: KProperty<*>) {
         inCaseOf {
             property.kClass?.isCompanion == true
         } throwMockitoException {
@@ -124,7 +124,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
         }
     }
 
-    internal fun checkSealedClass(annotationClass: KClass<out Any>, property: KProperty<*>) {
+    internal fun verifySealedClass(annotationClass: KClass<out Any>, property: KProperty<*>) {
         inCaseOf {
             property.kClass?.isSealed == true
         } throwMockitoException {
@@ -137,7 +137,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
     }
 
 
-    internal fun checkDelegateProperty(annotationClass: KClass<out Any>, property: KProperty<*>) {
+    internal fun verifyDelegateProperty(annotationClass: KClass<out Any>, property: KProperty<*>) {
         val delegateClassName = property.javaField?.type?.kotlin?.qualifiedName ?: "unknown"
         inCaseOf {
             property.kClass != property.javaField?.type?.kotlin
@@ -150,7 +150,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
         }
     }
 
-    internal fun checkIsArgumentCaptor(property: KProperty<*>) {
+    internal fun verifyIsArgumentCaptor(property: KProperty<*>) {
         inCaseOf {
             ArgumentCaptor::class != property.returnType.classifier
         } throwMockitoException {
@@ -163,7 +163,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
     }
 
 
-    internal fun checkIsKArgumentCaptor(property: KProperty<*>) {
+    internal fun verifyIsKArgumentCaptor(property: KProperty<*>) {
         inCaseOf {
             KArgumentCaptor::class != property.returnType.classifier
         } throwMockitoException {
@@ -175,7 +175,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
         }
     }
 
-    internal fun checkInjectMocksProperty(property: KProperty<*>) {
+    internal fun verifyInjectMocksProperty(property: KProperty<*>) {
 
         fun isInterface(property: KProperty<*>) = property.kClass?.java?.isInterface ?: true
 
@@ -222,7 +222,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
     }
 
 
-    internal fun checkExceptionAfterCreateInstanceOfInjectMocks(e: Exception, property: KProperty<*>) {
+    internal fun verifyExceptionAfterCreateInstanceOfInjectMocks(e: Exception, property: KProperty<*>) {
         val reason = if (e is InvocationTargetException) "constructor threw an exception" else e::class.simpleName
         inCaseOf { true } throwMockitoException {
             """
@@ -235,7 +235,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
         }
     }
 
-    internal fun checkInstanceOfInjectMocksIsNotNull(instance: Any?, property: KProperty<*>) {
+    internal fun verifyInstanceOfInjectMocksIsNotNull(instance: Any?, property: KProperty<*>) {
         inCaseOf {
             instance == null
         } throwMockitoException {
@@ -248,7 +248,7 @@ internal object MockAnnotationsChecker { // TODO renamed to  *Verifier
         }
     }
 
-    internal fun checkImmutableInjectMocksProperty(property: KProperty<*>) {
+    internal fun verifyImmutableInjectMocksProperty(property: KProperty<*>) {
         inCaseOf {
             property !is KMutableProperty
         } throwMockitoException {

@@ -1,7 +1,7 @@
 # Mockito Annotations for Kotlin
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.4%2B-blue.svg?longCache=true)
-![Mockito](https://img.shields.io/badge/Mockito-2.28%2B-blue.svg?longCache=true)
+![Mockito](https://img.shields.io/badge/Mockito-3.8.0%2B-blue.svg?longCache=true)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg?longCache=true)](https://github.com/wickie73/mockito4kotlin-annotation/blob/master/LICENSE)
 
 ![Travis.Build](https://travis-ci.org/wickie73/mockito4kotlin-annotation.svg?longCache=true)
@@ -15,7 +15,7 @@ In this library the initialization of fields annotated with Mockito annotations 
  is replaced by
 `KMockitoAnnotations.initMocks(testClass)`
 which is written in Kotlin and supports most of Kotlin specific features.
-It is compatible with [MockitoAnnotations.initMocks(testClass)](https://static.javadoc.io/org.mockito/mockito-core/2.23.0/org/mockito/MockitoAnnotations.html).
+It is compatible with [MockitoAnnotations.initMocks(testClass)](https://javadoc.io/doc/org.mockito/mockito-core/3.8.0/org/mockito/ArgumentMatcher.html).
 
 ## Content
 * [Installing](#installing)
@@ -29,14 +29,14 @@ Installing
 Mockito Annotations for Kotlin is available on jcenter.
 ### gradle
 ```gradle
-testCompile 'io.github.wickie73:mockito4kotlin-annotation:0.4.x'
+testCompile 'io.github.wickie73:mockito4kotlin-annotation:0.5.x'
 ```
 ### maven
 ```xml
 <dependency>
     <groupId>io.github.wickie73</groupId>
     <artifactId>mockito4kotlin-annotation</artifactId>
-    <version>0.4.x</version>
+    <version>0.5.x</version>
     <scope>test</scope>
 </dependency>
 

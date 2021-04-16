@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -36,6 +36,7 @@ import org.mockito.Answers
 import org.mockito.Mockito
 import io.github.wickie73.mockito4kotlin.annotation.KMock
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.AnnotationsTest] and
@@ -46,6 +47,8 @@ import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
  * * @[org.mockito.InjectMocks]
  */
 class KMockAnnotationsTest {
+
+    private lateinit var testCloseable: AutoCloseable
 
     @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
     annotation class NotAMock
@@ -64,7 +67,14 @@ class KMockAnnotationsTest {
 
     @BeforeEach
     fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @Test
@@ -90,11 +100,13 @@ class KMockAnnotationsTest {
     fun shouldLookForAnnotatedMocksInSuperClasses() {
         val sub = Sub()
 
-        KMockitoAnnotations.initMocks(sub)
+        val autoCloseable = KMockitoAnnotations.openMocks(sub)
 
         assertNotNull(sub.mock)
         assertNotNull(sub.baseMock)
         assertNotNull(sub.superBaseMock)
+
+        autoCloseable.close()
     }
 
     @KMock(answer = Answers.RETURNS_MOCKS, name = "i have a name")

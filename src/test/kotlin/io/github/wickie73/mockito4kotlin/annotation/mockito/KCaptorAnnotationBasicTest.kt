@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -31,13 +31,10 @@ import org.mockito.kotlin.KArgumentCaptor
 import org.mockito.kotlin.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import io.github.wickie73.mockito4kotlin.annotation.KCaptor
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.*
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.CaptorAnnotationBasicTest] and
@@ -55,6 +52,8 @@ class KCaptorAnnotationBasicTest {
         fun save(capture: Person)
     }
 
+    private lateinit var testCloseable: AutoCloseable
+
     @Mock
     internal lateinit var peopleRepository: PeopleRepository
 
@@ -64,7 +63,14 @@ class KCaptorAnnotationBasicTest {
 
     @BeforeEach
     fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @KCaptor

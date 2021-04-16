@@ -3,7 +3,7 @@ ext {
     libArtifactId = 'mockito4kotlin-annotation'
     libVersion = version
     title = 'Mockito Annotations for Kotlin'
-    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito, Mockito-Kotlin.'
+    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito and Mockito-Kotlin.'
     licenseURL = 'https://opensource.org/licenses/MIT'
     projectURL = 'https://github.com/wickie73/mockito4kotlin-annotation'
 }
@@ -37,8 +37,8 @@ jar.manifest {
         "Specification-Version": version,
         "Specification-Vendor": "wickie73",
         "Export-Package": "io.github.wickie73.mockito4kotlin.annotation",
-        "Import-Package": 'org.mockito.kotlin;version="[2.2.7,3)"',
-        "Require-Bundle": 'org.mockito;version="[2.24,3)",org.jetbrains.kotlin;version="[1.3.0,1.5)"',
+        "Import-Package": 'org.mockito.kotlin;version="[3.0.0,4)"',
+        "Require-Bundle": 'org.mockito;version="[3.4.0,4)",org.jetbrains.kotlin;version="[1.3.0,1.6)"',
         "Build-Jdk": java_version
     )
 }
@@ -135,23 +135,26 @@ tasks.build.dependsOn('publishJavaLibraryPublicationToMavenLocal')
 
 // Deploying
 nexusPublishing {
+    def ossrhUser = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : ''
+    def ossrhPwd = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : ''
+
     repositories {
         sonatype {
             nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
             snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            if (project.hasProperty("ossrhUsername")) {
-                username = project.property("ossrhUsername")
-                password = project.property("ossrhPassword")
+            if (ossrhUser != '') {
+                username = ossrhUser
+                password = ossrhPwd
             }
         }
     }
-
 }
 
 // Deploying
 apply plugin: 'maven'
 
 // Build, sign, and upload
+// deprecated in gradle 7
 uploadArchives {
     def ossrhUser = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : ''
     def ossrhPwd = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : ''

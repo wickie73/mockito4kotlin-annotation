@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.*
 import org.mockito.exceptions.base.MockitoException
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 
 /**
  * This test class is originated from Mockito's [org.mockitousage.annotation.WrongSetOfAnnotationsTest] and
@@ -45,14 +46,23 @@ import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
  */
 class WrongSetOfAnnotationsTest {
 
+    private lateinit var testCloseable: AutoCloseable
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
+    }
+
     @Test
     @DisplayName("should not allow Mock and Spy")
     fun testWithMockAndSpyAnnotation() {
         val result = assertThrows(MockitoException::class.java) {
-            KMockitoAnnotations.initMocks(object : Any() {
+            KMockitoAnnotations.openMocks(object : Any() {
                 @Mock
                 @Spy
-                internal var mock: List<*>? = null
+                var mock: List<*>? = null
             })
         }
 
@@ -66,13 +76,13 @@ class WrongSetOfAnnotationsTest {
     @Test
     @DisplayName("should not allow Spy and InjectMocks on interfaces")
     fun testWithSpyAndInjectMocksAnnotationOnInterfaces() {
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(object : Any() {
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(object : Any() {
                 @InjectMocks
                 @Spy
-                internal var mock: List<*>? = null
+                var mock: List<*>? = null
             })
-        })
+        }
         assertThat(result)
             .hasMessageContaining("Cannot instantiate @InjectMocks field named")
             .hasMessageContaining("'List' is an interface")
@@ -81,11 +91,12 @@ class WrongSetOfAnnotationsTest {
     @Test
     @DisplayName("should allow Spy and InjectMocks")
     fun testWithSpyAndInjectMocksAnnotation() {
-        KMockitoAnnotations.initMocks(object : Any() {
+        val innerTestCloseable = KMockitoAnnotations.openMocks(object : Any() {
             @InjectMocks
             @Spy
-            internal var mock: WithDependency? = null
+            var mock: WithDependency? = null
         })
+        innerTestCloseable.close()
     }
 
     internal open class WithDependency {
@@ -95,13 +106,13 @@ class WrongSetOfAnnotationsTest {
     @Test
     @DisplayName("should not allow Mock and InjectMocks")
     fun testWithMockAndInjectMocksAnnotation() {
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(object : Any() {
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(object : Any() {
                 @InjectMocks
                 @Mock
-                internal var mock: List<*>? = null
+                var mock: List<*>? = null
             })
-        })
+        }
         assertThat(result)
             .hasMessageContaining("multiple Mockito4Kotlin annotations")
             .hasMessageContaining("InjectMocks")
@@ -111,13 +122,13 @@ class WrongSetOfAnnotationsTest {
     @Test
     @DisplayName("should not allow Captor and Mock")
     fun testWithMockAndCaptorAnnotation() {
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(object : Any() {
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(object : Any() {
                 @Mock
                 @Captor
-                internal var captor: ArgumentCaptor<*>? = null
+                var captor: ArgumentCaptor<*>? = null
             })
-        })
+        }
         assertThat(result)
             .hasMessageContaining("multiple Mockito4Kotlin annotations")
             .hasMessageContaining("Captor")
@@ -127,13 +138,13 @@ class WrongSetOfAnnotationsTest {
     @Test
     @DisplayName("should not allow Captor and Spy")
     fun testWithSpyAndCaptorAnnotation() {
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(object : Any() {
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(object : Any() {
                 @Spy
                 @Captor
-                internal var captor: ArgumentCaptor<*>? = null
+                var captor: ArgumentCaptor<*>? = null
             })
-        })
+        }
         assertThat(result)
             .hasMessageContaining("multiple Mockito4Kotlin annotations")
             .hasMessageContaining("Captor")
@@ -143,13 +154,13 @@ class WrongSetOfAnnotationsTest {
     @Test
     @DisplayName("should not allow Captor and InjectMocks")
     fun testWithCaptorAndInjectsMocksAnnotation() {
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(object : Any() {
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(object : Any() {
                 @InjectMocks
                 @Captor
-                internal var captor: ArgumentCaptor<*>? = null
+                var captor: ArgumentCaptor<*>? = null
             })
-        })
+        }
         assertThat(result)
             .hasMessageContaining("multiple Mockito4Kotlin annotations")
             .hasMessageContaining("Captor")

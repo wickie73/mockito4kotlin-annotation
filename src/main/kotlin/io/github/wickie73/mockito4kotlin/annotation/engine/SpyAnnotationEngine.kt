@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -29,11 +29,11 @@ package io.github.wickie73.mockito4kotlin.annotation.engine
 
 import org.mockito.Mockito
 import org.mockito.Spy
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableProperties
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkNumberOfMockAnnotations
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalCompanionObjects
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkPrivateOrInternalInnerClass
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkSealedClass
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyImmutableProperties
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyNumberOfMockAnnotations
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyPrivateOrInternalCompanionObjects
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyPrivateOrInternalInnerClass
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifySealedClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
@@ -43,11 +43,11 @@ internal class SpyAnnotationEngine : AbstractAnnotationEngine() {
 
     override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
-        checkImmutableProperties(property)
-        checkNumberOfMockAnnotations(property)
-        checkPrivateOrInternalInnerClass(Spy::class, property, anyInstanceWithMocks)
-        checkPrivateOrInternalCompanionObjects(Spy::class, property)
-        checkSealedClass(Spy::class, property)
+        verifyImmutableProperties(property)
+        verifyNumberOfMockAnnotations(property)
+        verifyPrivateOrInternalInnerClass(Spy::class, property, anyInstanceWithMocks)
+        verifyPrivateOrInternalCompanionObjects(Spy::class, property)
+        verifySealedClass(Spy::class, property)
 
         val instanceValue = if (property.isLateinit) null else property.getter.call(anyInstanceWithMocks)
         assignObjectToProperty(property as KMutableProperty<*>, anyInstanceWithMocks, createSpy(instanceValue, property))

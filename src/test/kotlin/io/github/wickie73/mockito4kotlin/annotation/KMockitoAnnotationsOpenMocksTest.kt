@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -27,30 +27,43 @@
 
 package io.github.wickie73.mockito4kotlin.annotation
 
-import org.mockito.kotlin.whenever
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.whenever
 import java.security.SecureRandom
 import kotlin.reflect.KFunction0
 
-class KMockitoAnnotationsInitMocksTest {
+class KMockitoAnnotationsOpenMocksTest {
 
+    private lateinit var testCloseable: AutoCloseable
+    private lateinit var secondCloseable: AutoCloseable
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
+        if (this::secondCloseable.isInitialized) {
+            secondCloseable.close()
+        }
+    }
 
     @Test
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee)' is called twice")
-    fun testInitMocksTwoTimes() {
+    @DisplayName("should mock mutable property when 'KMockitoAnnotations.openMocks(testee)' is called twice")
+    fun testOpenMocksTwoTimes() {
         val testee = ClassWithMutableProperties()
 
-        KMockitoAnnotations.initMocks(testee)
-        KMockitoAnnotations.initMocks(testee)
+        testCloseable = KMockitoAnnotations.openMocks(testee)
+        secondCloseable = KMockitoAnnotations.openMocks(testee)
         whenever(testee.lateinitList[0]).thenReturn("test")
 
         assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
@@ -58,18 +71,22 @@ class KMockitoAnnotationsInitMocksTest {
     }
 
     @RepeatedTest(value = 15, name = "{displayName} {currentRepetition}/{totalRepetitions}")
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee)' is called many times in many treads")
-    fun testInitMocksManyTimesInDifferentThreads() {
+    @DisplayName("should mock mutable property when 'KMockitoAnnotations.openMocks(testee)' is called many times in many treads")
+    fun testOpenMocksManyTimesInDifferentThreads() {
 
-        fun runMockAnnotationsInitMocks() {
+        fun runMockAnnotationsOpenMocks() {
             sleepRandomTime()
             val testee = ClassWithMutableProperties()
 
-            KMockitoAnnotations.initMocks(testee)
-            whenever(testee.lateinitList[0]).thenReturn("test")
+            try {
+                testCloseable = KMockitoAnnotations.openMocks(testee)
+                whenever(testee.lateinitList[0]).thenReturn("test")
 
-            assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
-            assertEquals("test", testee.lateinitList[0])
+                assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
+                assertEquals("test", testee.lateinitList[0])
+            } finally {
+                releaseMocks()
+            }
         }
 
         fun fill(size: Int, kFunction0: KFunction0<Unit>): List<KFunction0<Unit>> {
@@ -78,43 +95,47 @@ class KMockitoAnnotationsInitMocksTest {
             return result.toList()
         }
 
-        val list = fill(200, ::runMockAnnotationsInitMocks)
+        val list = fill(200, ::runMockAnnotationsOpenMocks)
 
         list.parallelStream().forEach(KFunction0<Unit>::invoke)
     }
 
     @RepeatedTest(value = 5, name = "{displayName} {currentRepetition}/{totalRepetitions}")
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee)' is called many times in many coroutines")
-    fun testInitMocksManyTimesWithCoroutines() = runBlocking {
+    @DisplayName("should mock mutable property when 'KMockitoAnnotations.openMocks(testee)' is called many times in many coroutines")
+    fun testOpenMocksManyTimesWithCoroutines() = runBlocking {
 
-        fun runMockAnnotationsInitMocks() {
+        fun runMockAnnotationsOpenMocks() {
             sleepRandomTime()
             val testee = ClassWithMutableProperties()
 
-            KMockitoAnnotations.initMocks(testee)
-            whenever(testee.lateinitList[0]).thenReturn("test")
+            try {
+                testCloseable = KMockitoAnnotations.openMocks(testee)
+                whenever(testee.lateinitList[0]).thenReturn("test")
 
-            assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
-            assertEquals("test", testee.lateinitList[0])
+                assertTrue(Mockito.mockingDetails(testee.lateinitList).isMock)
+                assertEquals("test", testee.lateinitList[0])
+            } finally {
+                releaseMocks()
+            }
         }
 
         (1..200).map {
             launch {
                 val delayTime = SecureRandom().nextInt(10).toLong()
                 delay(delayTime)
-                runMockAnnotationsInitMocks()
+                runMockAnnotationsOpenMocks()
             }
         }.joinAll()
     }
 
     @Test
-    @DisplayName("should mock mutable property when 'KMockitoAnnotations.initMocks(testee1 / testee2)' is called")
-    fun testInitMocksTwoTimesWithDifferentInstances() {
+    @DisplayName("should mock mutable property when 'KMockitoAnnotations.openMocks(testee1 / testee2)' is called")
+    fun testOpenMocksTwoTimesWithDifferentInstances() {
         val testee1 = ClassWithMutableProperties()
         val testee2 = ClassWithMutableProperties()
 
-        KMockitoAnnotations.initMocks(testee1)
-        KMockitoAnnotations.initMocks(testee2)
+        testCloseable = KMockitoAnnotations.openMocks(testee1)
+        secondCloseable = KMockitoAnnotations.openMocks(testee2)
         whenever(testee1.lateinitList[0]).thenReturn("test1")
         whenever(testee2.lateinitList[0]).thenReturn("test2")
 

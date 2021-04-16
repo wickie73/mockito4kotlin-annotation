@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -40,6 +40,7 @@ import org.mockito.Mock
 import org.mockito.exceptions.base.MockitoException
 import io.github.wickie73.mockito4kotlin.annotation.KCaptor
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 import java.util.*
 
 /**
@@ -51,6 +52,8 @@ import java.util.*
  * * @[org.mockito.InjectMocks]
  */
 class KCaptorAnnotationTest {
+
+    private lateinit var testCloseable: AutoCloseable
 
     @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
     annotation class NotAMock
@@ -79,7 +82,14 @@ class KCaptorAnnotationTest {
 
     @BeforeEach
     fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @Test
@@ -132,9 +142,9 @@ class KCaptorAnnotationTest {
     @Test
     @DisplayName("Should scream when wrong type for kcaptor")
     fun testWithWrongType() {
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(WrongType())
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(WrongType())
+        }
 
         assertThat(result)
             .hasMessageContaining("@KCaptor field must be of the type ${KArgumentCaptor::class.qualifiedName}")
@@ -151,9 +161,9 @@ class KCaptorAnnotationTest {
     @Test
     @DisplayName("Should scream when more than one mockito annotation")
     fun testWhenMoreThanOneMockitoAnnotation() {
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(ToManyAnnotations())
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(ToManyAnnotations())
+        }
 
         assertThat(result)
             .hasMessageContaining("missingGenericsField")
@@ -165,11 +175,13 @@ class KCaptorAnnotationTest {
     fun testWithAnnotatedKCaptorsInSuperClasses() {
         val sub = Sub()
 
-        KMockitoAnnotations.initMocks(sub)
+        val autoCloseable = KMockitoAnnotations.openMocks(sub)
 
         assertNotNull(sub.captor)
         assertNotNull(sub.baseCaptor)
         assertNotNull(sub.superBaseCaptor)
+
+        autoCloseable.close()
     }
 
 

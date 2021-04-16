@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -27,10 +27,10 @@
 
 package io.github.wickie73.mockito4kotlin.annotation.engine
 
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkExceptionAfterCreateInstanceOfInjectMocks
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkImmutableInjectMocksProperty
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkInjectMocksProperty
-import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsChecker.checkInstanceOfInjectMocksIsNotNull
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyExceptionAfterCreateInstanceOfInjectMocks
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyImmutableInjectMocksProperty
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyInjectMocksProperty
+import io.github.wickie73.mockito4kotlin.annotation.engine.MockAnnotationsVerifier.verifyInstanceOfInjectMocksIsNotNull
 import io.github.wickie73.mockito4kotlin.annotation.kClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -42,7 +42,7 @@ internal class InjectMocksAnnotationEngine : AbstractAnnotationEngine() {
 
     override fun process(anyInstanceWithMocks: Any, property: KProperty<*>) {
         property.isAccessible = true
-        checkInjectMocksProperty(property)
+        verifyInjectMocksProperty(property)
 
         val instanceToBeMocked = property.getter.call(anyInstanceWithMocks) ?: createAndAssignInstanceOf(property, anyInstanceWithMocks)
         val mockCandidates = instanceToBeMocked::class.memberProperties.filterIsInstance<KMutableProperty<*>>()
@@ -55,8 +55,8 @@ internal class InjectMocksAnnotationEngine : AbstractAnnotationEngine() {
 
     private fun createAndAssignInstanceOf(property: KProperty<*>, anyWithMocks: Any): Any {
         val instance = createInstanceOfInjectMocksProperty(property)
-        checkImmutableInjectMocksProperty(property)
-        checkInstanceOfInjectMocksIsNotNull(instance, property)
+        verifyImmutableInjectMocksProperty(property)
+        verifyInstanceOfInjectMocksIsNotNull(instance, property)
         assignInstanceToProperty(property as KMutableProperty<*>, anyWithMocks, instance as Any)
         return instance
     }
@@ -65,7 +65,7 @@ internal class InjectMocksAnnotationEngine : AbstractAnnotationEngine() {
         try {
             property.kClass?.createInstance()
         } catch (e: Exception) {
-            checkExceptionAfterCreateInstanceOfInjectMocks(e, property)
+            verifyExceptionAfterCreateInstanceOfInjectMocks(e, property)
         }
 
     private fun assignInstanceToProperty(property: KMutableProperty<*>, anyWithMocks: Any, instance: Any) =

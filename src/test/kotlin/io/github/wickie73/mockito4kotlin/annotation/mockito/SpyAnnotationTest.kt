@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- *   Copyright (c) 2017-2021 Wilhelm Schulenburg
+ *   Copyright (c) 2017 Wilhelm Schulenburg
  *   Copyright (c) 2007 Mockito contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -37,6 +37,7 @@ import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.exceptions.base.MockitoException
 import io.github.wickie73.mockito4kotlin.annotation.KMockitoAnnotations
+import org.junit.jupiter.api.AfterEach
 import java.util.*
 
 /**
@@ -48,6 +49,8 @@ import java.util.*
  * * @[org.mockito.InjectMocks]
  */
 class SpyAnnotationTest {
+
+    private lateinit var testCloseable: AutoCloseable
 
     @Spy
     private var spiedList: List<String> = mutableListOf()
@@ -63,7 +66,14 @@ class SpyAnnotationTest {
 
     @BeforeEach
     fun setUp() {
-        KMockitoAnnotations.initMocks(this)
+        testCloseable = KMockitoAnnotations.openMocks(this)
+    }
+
+    @AfterEach
+    fun releaseMocks() {
+        if (this::testCloseable.isInitialized) {
+            testCloseable.close()
+        }
     }
 
     @Test
@@ -96,10 +106,11 @@ class SpyAnnotationTest {
 
         val withSpy = WithSpy()
 
-        KMockitoAnnotations.initMocks(withSpy)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(withSpy)
 
         whenever(withSpy.list!!.size).thenReturn(3)
         assertEquals(3, withSpy.list!!.size)
+        innerTestCloseable.close()
     }
 
     @Test
@@ -113,10 +124,13 @@ class SpyAnnotationTest {
         val withSpy = WithSpy()
 
         //when
-        KMockitoAnnotations.initMocks(withSpy)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(withSpy)
 
         //then
         verify(withSpy.list, never()).isEmpty()
+
+        // finit
+        innerTestCloseable.close()
     }
 
     @Test
@@ -127,9 +141,9 @@ class SpyAnnotationTest {
             var noValidConstructor: NoValidConstructor? = null
         }
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(FailingSpy())
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(FailingSpy())
+        }
 
         assertThat(result.message)
             .contains("Unable to create mock instance")
@@ -144,9 +158,9 @@ class SpyAnnotationTest {
             var throwingConstructor: ThrowingConstructor? = null
         }
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(FailingSpy())
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(FailingSpy())
+        }
 
         assertThat(result.message).contains("Unable to create mock instance")
     }
@@ -167,9 +181,11 @@ class SpyAnnotationTest {
 
         val withSpy = SpyAbstractClass()
 
-        KMockitoAnnotations.initMocks(withSpy)
+        val innerTestCloseable = KMockitoAnnotations.openMocks(withSpy)
 
         assertEquals(listOf("a"), withSpy.asSingletonList("a"))
+
+        innerTestCloseable.close()
     }
 
     @Test
@@ -200,9 +216,9 @@ class SpyAnnotationTest {
             }
         }
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(WithMockAndSpy())
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(WithMockAndSpy())
+        }
 
         assertThat(result.message).contains("Unable to create mock instance of type 'InnerStrength'")
     }
@@ -210,9 +226,9 @@ class SpyAnnotationTest {
     @Test
     @DisplayName("should reset spy")
     fun testResetSpy() {
-        assertThrows(IndexOutOfBoundsException::class.java, {
+        assertThrows(IndexOutOfBoundsException::class.java) {
             spiedList[10] // see shouldInitSpy
-        })
+        }
     }
 
     @Test
@@ -227,9 +243,9 @@ class SpyAnnotationTest {
             private var inner: Outer.Inner? = null
         }
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(WithSpy())
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(WithSpy())
+        }
 
         assertThat(result).hasMessageContaining("Unable to create mock instance of type")
     }
@@ -239,9 +255,9 @@ class SpyAnnotationTest {
     fun testReportPrivateInnerClassesNotSupported() {
         val spyWithInnerPrivate = WithInnerPrivate()
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(spyWithInnerPrivate)
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(spyWithInnerPrivate)
+        }
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize private/internal inner classes.")
             .hasMessageContaining(WithInnerPrivate::class.simpleName)
@@ -254,9 +270,9 @@ class SpyAnnotationTest {
     fun testReportInternalAbstractInnerClassesNotSupported() {
         val spyWithInnerInternal = WithInnerInternal()
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(spyWithInnerInternal)
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(spyWithInnerInternal)
+        }
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize private/internal inner classes.")
             .hasMessageContaining(WithInnerInternal::class.simpleName)
@@ -269,9 +285,9 @@ class SpyAnnotationTest {
     fun testReportPrivateAbstractInnerClassesNotSupported() {
         val spyWithInnerPrivateAbstract = WithInnerPrivateAbstract()
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(spyWithInnerPrivateAbstract)
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(spyWithInnerPrivateAbstract)
+        }
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize private/internal inner classes.")
             .hasMessageContaining(WithInnerPrivateAbstract::class.simpleName)
@@ -284,9 +300,9 @@ class SpyAnnotationTest {
     fun testReportPrivateStaticAbstractInnerClassesNotSupported() {
         val spyWithInnerPrivateStaticAbstract = WithInnerPrivateStaticAbstract()
 
-        val result = assertThrows(MockitoException::class.java, {
-            KMockitoAnnotations.initMocks(spyWithInnerPrivateStaticAbstract)
-        })
+        val result = assertThrows(MockitoException::class.java) {
+            KMockitoAnnotations.openMocks(spyWithInnerPrivateStaticAbstract)
+        }
 
 
         assertThat(result).hasMessageContaining("@Spy annotation can't initialize companion objects.")
@@ -298,11 +314,11 @@ class SpyAnnotationTest {
     @DisplayName("should be able to stub and verify via varargs for list params")
     fun testSpyWithVarargs() {
         // You can stub with varargs.
-        whenever(translator.translate("hello", "mockito")).thenReturn(Arrays.asList("you", "too"))
+        whenever(translator.translate("hello", "mockito")).thenReturn(listOf("you", "too"))
 
         // Pretend the prod code will call translate(List<String>) with these elements.
-        assertThat(translator.translate(Arrays.asList("hello", "mockito"))).containsExactly("you", "too")
-        assertThat(translator.translate(Arrays.asList("not stubbed"))).isEmpty()
+        assertThat(translator.translate(listOf("hello", "mockito"))).containsExactly("you", "too")
+        assertThat(translator.translate(listOf("not stubbed"))).isEmpty()
 
         // You can verify with varargs.
         verify(translator).translate("hello", "mockito")
@@ -312,12 +328,12 @@ class SpyAnnotationTest {
     @DisplayName("should be able to stub and verify via varargs of matcher for list params")
     fun testSpyWithVarargsViaMatcher() {
         // You can stub with varargs of matcher.
-        whenever(translator.translate(any<String>())).thenReturn(Arrays.asList("huh?"))
-        whenever(translator.translate(eq("hello"))).thenReturn(Arrays.asList("hi"))
+        whenever(translator.translate(any<String>())).thenReturn(listOf("huh?"))
+        whenever(translator.translate(eq("hello"))).thenReturn(listOf("hi"))
 
         // Pretend the prod code will call translate(List<String>) with these elements.
-        assertThat(translator.translate(Arrays.asList("hello"))).containsExactly("hi")
-        assertThat(translator.translate(Arrays.asList("not explicitly stubbed"))).containsExactly("huh?")
+        assertThat(translator.translate(listOf("hello"))).containsExactly("hi")
+        assertThat(translator.translate(listOf("not explicitly stubbed"))).containsExactly("huh?")
 
         // You can verify with varargs of matchers.
         verify(translator).translate(eq("hello"))
