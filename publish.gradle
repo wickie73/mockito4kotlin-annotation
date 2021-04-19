@@ -3,7 +3,7 @@ ext {
     libArtifactId = 'mockito4kotlin-annotation'
     libVersion = version
     title = 'Mockito Annotations for Kotlin'
-    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito and Mockito-Kotlin.'
+    descriptionPOM = 'Mockito Annotations for Kotlin: a small Kotlin library which supports Annotations for Mockito-Kotlin.'
     licenseURL = 'https://opensource.org/licenses/MIT'
     projectURL = 'https://github.com/wickie73/mockito4kotlin-annotation'
 }
