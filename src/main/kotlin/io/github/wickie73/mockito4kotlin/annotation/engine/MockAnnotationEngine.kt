@@ -71,9 +71,5 @@ internal class MockAnnotationEngine : AbstractAnnotationEngine() {
         return mockSettings
     }
 
-
-    // property.annotations.size= 0
-    // property.annotations.find { it is Mock }
-    // ??   -> check
     private fun toMockAnnotation(property: KProperty<*>): Mock = property.allAnnotations().find { it is Mock } as Mock
 }

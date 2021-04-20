@@ -49,5 +49,3 @@ All notable changes to this project will be documented in this file.
 * Updated mockito 2.18.3 -> 2.19
 * Updated mockito-kotlin 1.5.0 -> 2.0.0-RC1
 * Added tests
-
-## [0.2.7] - 2018-06-02
